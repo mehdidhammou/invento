@@ -31,17 +31,18 @@ Installez les dépendances :
 
 ```
 composer install
+npm install
 ```
 
 Créez une copie du fichier d'exemple de l'environnement:
 
-Linux
+- Linux
 
 ```
 cp .env.example .env
 ```
 
-Windows
+- Windows
 
 ```
 copy .env.example .env
@@ -75,6 +76,7 @@ php artisan migrate:fresh --seed
 Pour démarrer le serveur de développement, exécutez la commande suivante :
 
 ```
+npm run dev
 php artisan serve
 ```
 
