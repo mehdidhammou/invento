@@ -10,10 +10,9 @@ Ce projet consiste en une application Web de gestion et de reporting de stock qu
 
 ## Configuration:
 
--   [Composer](https://getcomposer.org/download/)
--   [Node.js](https://nodejs.org/en/download/)
--   [npm](https://www.npmjs.com/get-npm)
--   [XAMPP](https://www.apachefriends.org/download.html)
+1.   [XAMPP](https://www.apachefriends.org/download.html) (PHP `^8.1`)
+2.   [Composer](https://getcomposer.org/download/)
+3.   [Node.js](https://nodejs.org/en/download/)
 
 Clonez le référentiel :
 
