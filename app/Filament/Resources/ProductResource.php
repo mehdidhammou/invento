@@ -28,6 +28,7 @@ class ProductResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('name')
                     ->required()
+                    ->unique()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('price')
                     ->required(),

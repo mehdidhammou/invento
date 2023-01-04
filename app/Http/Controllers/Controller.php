@@ -15,6 +15,6 @@ class Controller extends BaseController
 
     public function query()
     {
-        return ProductType::pluck('id')->random();
+        return ProductType::withSum('products', 'total_quantity')->with('products')->get();
     }
 }

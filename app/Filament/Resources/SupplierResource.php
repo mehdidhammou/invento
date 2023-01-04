@@ -31,10 +31,12 @@ class SupplierResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->email()
+                    ->unique()
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
+                    ->unique()
                     ->required()
                     ->maxLength(255),
             ]);
@@ -63,14 +65,14 @@ class SupplierResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -78,5 +80,5 @@ class SupplierResource extends Resource
             'create' => Pages\CreateSupplier::route('/create'),
             'edit' => Pages\EditSupplier::route('/{record}/edit'),
         ];
-    }    
+    }
 }
