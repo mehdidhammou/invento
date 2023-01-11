@@ -41,6 +41,7 @@ class SaleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('product.name'),
+                Tables\Columns\TextColumn::make('product.productType.name'),
                 Tables\Columns\TextColumn::make('client.name'),
                 Tables\Columns\TextColumn::make('quantity'),
                 Tables\Columns\TextColumn::make('price'),

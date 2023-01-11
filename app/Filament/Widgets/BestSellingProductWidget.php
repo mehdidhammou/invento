@@ -3,30 +3,26 @@
 namespace App\Filament\Widgets;
 
 use App\Services\ProductTypeService;
-use Filament\Widgets\PieChartWidget;
-use Illuminate\Database\Eloquent\Collection;
-use PhpParser\ErrorHandler\Collecting;
-use Psy\CodeCleaner\LabelContextPass;
+use Filament\Widgets\BarChartWidget;
+use Filament\Widgets\Widget;
 
-class ProductsChart extends PieChartWidget
+class BestSellingProductWidget extends BarChartWidget
 {
 
-    protected static ?string $heading = 'Best Selling Product Types';
-
-    protected int | string | array $columnSpan = '2';
+    protected static ?string $heading = 'Best Selling Products';
 
     protected $bestSellingProducts;
 
-
     public function __construct()
     {
-        $this->bestSellingProducts = ProductTypeService::getBestSellingTypes();
+        $this->bestSellingProducts = ProductTypeService::getBestSellingProducts();
     }
+
 
     protected function getData(): array
     {
         return [
-            'labels' => $this->bestSellingProducts->pluck('product_type_name')->toArray(),
+            'labels' => $this->bestSellingProducts->pluck('name')->toArray(),
             'datasets' => [
                 [
                     'label' => 'Blog posts created',
@@ -36,4 +32,5 @@ class ProductsChart extends PieChartWidget
             ],
         ];
     }
+
 }
