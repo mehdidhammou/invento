@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Client;
 use App\Models\ProductType;
+use App\Services\ProductTypeService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -15,6 +17,6 @@ class Controller extends BaseController
 
     public function query()
     {
-        return ProductType::withSum('products', 'total_quantity')->with('products')->get();
+        return ProductTypeService::getTypes();
     }
 }

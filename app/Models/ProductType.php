@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProductType extends Model
 {
     use HasFactory;
+    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
     protected $fillable = [
         'name',
@@ -16,5 +17,10 @@ class ProductType extends Model
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function clients()
+    {
+        return $this->hasManyDeep(Client::class, [Product::class, Sale::class]);
     }
 }

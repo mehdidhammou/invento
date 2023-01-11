@@ -6,13 +6,17 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "alperenersoy/filament-export": "^0.2.4",
         "filament/filament": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
-        "laravel/tinker": "^2.7"
+        "laravel/tinker": "^2.7",
+        "staudenmeir/belongs-to-through": "^2.12",
+        "staudenmeir/eloquent-has-many-deep": "^1.17"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.7",
         "doctrine/dbal": "^3.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/breeze": "^1.16",

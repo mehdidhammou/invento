@@ -18,6 +18,8 @@ class ProductTypeResource extends Resource
 {
     protected static ?string $model = ProductType::class;
 
+    protected static ?string $navigationGroup = 'Inventory';
+
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
     public static function form(Form $form): Form
