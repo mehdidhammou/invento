@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('purchases', function (Blueprint $table) {
+        Schema::create('supplier_settlements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained();
-            $table->foreignId('supplier_id')->constrained();
-            $table->integer('quantity');
-            $table->decimal('price', 8, 2);            
+            $table->foreignId('supplier_id')->nullable()->constrained()->nullOnDelete();
+            $table->decimal('amount', 12, 2)->default(0.00);
+            $table->date('date');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('purchases');
+        Schema::dropIfExists('supplier_settlements');
     }
 };

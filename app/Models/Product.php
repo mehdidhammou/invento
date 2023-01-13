@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,32 +12,29 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'price',
         'total_quantity',
-        'product_type_id',
+        'category_id',
     ];
 
 
-    public function productType()
+    public function category()
     {
-        return $this->belongsTo(ProductType::class);
-    }
-
-    public function purchases()
-    {
-        return $this->hasMany(Purchase::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function orders()
     {
         return $this->belongsToMany(Order::class)
             ->using(OrderProduct::class)
-            ->withPivot('quantity', 'price')
+            ->withPivot('quantity', 'unit_price', 'sale_price')
             ->withTimestamps();
     }
 
-    public function clients()
+    public function sales()
     {
-        return $this->hasManyDeep(Client::class, [Order::class, OrderProduct::class]);
+        return $this->belongsToMany(Sale::class)
+            ->using(SaleProduct::class)
+            ->withPivot('quantity', 'unit_price', 'sale_price')
+            ->withTimestamps();
     }
 }

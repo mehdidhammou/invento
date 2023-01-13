@@ -17,9 +17,14 @@ class Supplier extends Model
         'phone',
     ];
 
-    public function purchases()
+    public function orders()
     {
-        return $this->hasMany(Purchase::class);
+        return $this->hasMany(Order::class);
+    }
+
+    public function settlements()
+    {
+        return $this->hasMany(SupplierSettlement::class);
     }
 
 }

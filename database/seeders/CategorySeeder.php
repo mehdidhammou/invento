@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class PurchaseSeeder extends Seeder
+class CategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +16,6 @@ class PurchaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Purchase::factory(100)->create();
+        Category::factory(10)->create();
     }
 }

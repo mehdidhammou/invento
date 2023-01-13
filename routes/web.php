@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PurchaseStatusEnum;
 use App\Models\ProductType;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
@@ -32,8 +33,8 @@ Route::middleware('auth')->group(function () {
 
 Route::get('query', [Controller::class, 'query'])->name('query');
 
-Route::get('test/{id}', function ($id) {
-    ProductType::create(['id' => $id, 'name' => 'hello']);   
+Route::get('test/', function () {
+    dd(PurchaseStatusEnum::values());
 });
 
 require __DIR__.'/auth.php';

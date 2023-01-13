@@ -12,11 +12,17 @@ class Client extends Model
         'surname',
         'email',
         'phone',
+        'balance',
     ];
 
     public function sales()
     {
         return $this->hasMany(Sale::class);
+    }
+
+    public function settlements()
+    {
+        return $this->hasMany(ClientSettlement::class);
     }
 
 }

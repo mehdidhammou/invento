@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\PurchaseStatusEnum;
+use App\Filament\Resources\PurchaseResource;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,10 +17,12 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained();
-            $table->foreignId('client_id')->constrained();
-            $table->integer('quantity');
-            $table->decimal('price', 8, 2);
+            $table->foreignId('client_id')->nullable()->constrained()->nullOnDelete();
+            $table->decimal('total_price', 12, 2)->default(0.00);
+            $table->decimal('total_paid', 12, 2)->default(0.00);
+            $table->integer('discount')->default(0);
+            $table->date('date')->default(now());
+            $table->enum('status', PurchaseStatusEnum::values());
             $table->timestamps();
         });
     }

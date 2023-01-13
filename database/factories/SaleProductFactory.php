@@ -2,14 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\Order;
 use App\Models\Product;
+use App\Models\Sale;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\OrderProduct>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SaleProduct>
  */
-class OrderProductFactory extends Factory
+class SaleProductFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,7 +19,7 @@ class OrderProductFactory extends Factory
     public function definition()
     {
         return [
-            'order_id' => Order::pluck('id')->random(),
+            'sale_id' => Sale::pluck('id')->random(),
             'product_id' => Product::pluck('id')->random(),
             'quantity' => $this->faker->numberBetween(1, 100),
             'unit_price' => $this->faker->numberBetween(1000, 5000),

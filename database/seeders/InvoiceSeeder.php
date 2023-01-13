@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Sale;
+use App\Models\Invoice;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class SaleSeeder extends Seeder
+class InvoiceSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,6 +15,6 @@ class SaleSeeder extends Seeder
      */
     public function run()
     {
-        Sale::factory(100)->create();
+        Invoice::factory(10)->create();
     }
 }

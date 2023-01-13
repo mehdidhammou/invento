@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Client;
 use App\Models\Product;
+use App\Enums\OrderStatusEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,9 +21,11 @@ class SaleFactory extends Factory
     {
         return [
             'client_id' => Client::pluck('id')->random(),
-            'product_id' => Product::pluck('id')->random(),
-            'quantity' => $this->faker->numberBetween(1, 10),
-            'price' => $this->faker->numberBetween(1, 10),
+            'total_price' => $this->faker->numberBetween(100000, 999999),
+            'total_paid' => $this->faker->numberBetween(100000, 999999),
+            'discount' => $this->faker->numberBetween(0, 50),
+            'date' => $this->faker->date(),
+            'status' => $this->faker->randomElement(OrderStatusEnum::values()),
         ];
     }
 }

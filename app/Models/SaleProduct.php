@@ -5,21 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class OrderProduct extends Pivot
+class SaleProduct extends Pivot
 {
     use HasFactory;
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'sale_product';
 
     protected $fillable = [
-        'order_id',
+        'sale_id',
         'product_id',
         'quantity',
         'unit_price',
         'sale_price',
     ];
 
-    public function order()
+    public function sale()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Sale::class);
     }
 
     public function product()

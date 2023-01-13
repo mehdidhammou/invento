@@ -8,6 +8,7 @@ use Filament\Tables;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
+use App\Enums\PurchaseStatusEnum;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
@@ -42,6 +43,9 @@ class UserResource extends Resource
                     ->required(fn (string $context): bool => $context === 'create'),
                 Forms\Components\Toggle::make('is_admin')
                     ->required(),
+                    Forms\Components\Select::make('role')
+                    ->options(PurchaseStatusEnum::enumOptions())
+                    ->enum(\App\Enums\PurchaseStatusEnum::class)
             ]);
     }
 

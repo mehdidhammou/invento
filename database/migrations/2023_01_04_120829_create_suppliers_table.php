@@ -19,9 +19,10 @@ return new class extends Migration
             $table->string('surname');
             $table->string('email')->unique();
             $table->string('phone')->unique();
+            $table->decimal('balance', 12, 2)->default(0.00);
             $table->timestamps();
         });
-    }
+    }   
 
     /**
      * Reverse the migrations.

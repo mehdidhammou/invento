@@ -10,21 +10,34 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'supplier_id',
         'total_price',
+        'total_paid',
+        'discount',
+        'date',
         'status',
     ];
 
-    public function user()
+    public function supplier()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Supplier::class);
     }
 
     public function products()
     {
         return $this->belongsToMany(Product::class)
             ->using(OrderProduct::class)
-            ->withPivot('quantity', 'price')
+            ->withPivot('quantity', 'unit_price', 'sale_price')
             ->withTimestamps();
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function bls()
+    {
+        return $this->hasMany(BL::class);
     }
 }

@@ -45,12 +45,13 @@ class ProductResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('productType.name'),
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('price')->money('DZD'),
+                Tables\Columns\TextColumn::make('price')->money('DZD', true),
                 Tables\Columns\TextColumn::make('total_quantity'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime(),
+                Tables\Columns\TextColumn::make('total_price')
             ])
             ->filters([
                 //

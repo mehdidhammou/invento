@@ -16,9 +16,8 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('price', 8, 2)->default(0.00);
             $table->integer('total_quantity')->default(0);
-            $table->foreignId('product_type_id')->constrained('product_types');
+            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });
     }
