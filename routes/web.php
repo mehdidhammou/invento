@@ -1,8 +1,9 @@
 <?php
 
+use App\Models\ProductType;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +32,9 @@ Route::middleware('auth')->group(function () {
 
 Route::get('query', [Controller::class, 'query'])->name('query');
 
+Route::get('test/{id}', function ($id) {
+    ProductType::create(['id' => $id, 'name' => 'hello']);   
+});
+
 require __DIR__.'/auth.php';
+

@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProductTypeResource\Pages;
 use App\Filament\Resources\ProductTypeResource\RelationManagers;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 
 class ProductTypeResource extends Resource
 {
@@ -40,6 +42,11 @@ class ProductTypeResource extends Resource
                             return $record->products()->sum('total_quantity') ?? 0;
                         }
                     ),
+                Select::make('products')
+                    ->relationship('products', 'name')
+                    ->multiple()
+                    ->searchable()
+                    ->placeholder('Select products...'),
             ]);
     }
 

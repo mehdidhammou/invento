@@ -19,8 +19,8 @@ class ProductType extends Model
         return $this->hasMany(Product::class);
     }
 
-    public function clients()
+    public function getClients()
     {
-        return $this->hasManyDeep(Client::class, [Product::class, Sale::class]);
+        return $this->products()->with('client');
     }
 }

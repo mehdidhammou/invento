@@ -26,4 +26,17 @@ class Product extends Model
     {
         return $this->hasMany(Purchase::class);
     }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class)
+            ->using(OrderProduct::class)
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
+    }
+
+    public function clients()
+    {
+        return $this->hasManyDeep(Client::class, [Order::class, OrderProduct::class]);
+    }
 }
