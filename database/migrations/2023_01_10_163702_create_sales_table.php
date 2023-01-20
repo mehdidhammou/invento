@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\PurchaseStatusEnum;
+use App\Enums\SaleStatusEnum;
 use App\Filament\Resources\PurchaseResource;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('total_paid', 12, 2)->default(0.00);
             $table->integer('discount')->default(0);
             $table->date('date')->default(now());
-            $table->enum('status', PurchaseStatusEnum::values());
+            $table->enum('status', SaleStatusEnum::values());
             $table->timestamps();
         });
     }

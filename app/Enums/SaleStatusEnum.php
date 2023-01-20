@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum PurchaseStatusEnum
+enum SaleStatusEnum
 {
     case PENDING;
     case PAID;

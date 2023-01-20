@@ -1,8 +1,6 @@
 <?php
 
 use App\Models\Order;
-use App\Models\ProductType;
-use App\Enums\PurchaseStatusEnum;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
