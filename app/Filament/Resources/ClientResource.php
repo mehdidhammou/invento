@@ -4,14 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClientResource\Pages;
 use App\Filament\Resources\ClientResource\RelationManagers;
+use App\Filament\Resources\ClientResource\RelationManagers\SalesRelationManager;
+use App\Filament\Resources\ClientResource\RelationManagers\SettlementsRelationManager;
 use App\Models\Client;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ClientResource extends Resource
 {
@@ -20,7 +20,6 @@ class ClientResource extends Resource
     protected static ?string $navigationGroup = 'Partners';
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
-
     public static function form(Form $form): Form
     {
         return $form
@@ -33,14 +32,14 @@ class ClientResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->email()
-                    ->unique()
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
-                    ->unique()
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('balance')
+                    ->required(),
             ]);
     }
 
@@ -52,6 +51,7 @@ class ClientResource extends Resource
                 Tables\Columns\TextColumn::make('surname'),
                 Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\TextColumn::make('phone'),
+                Tables\Columns\TextColumn::make('balance'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
@@ -71,7 +71,8 @@ class ClientResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            SalesRelationManager::class,
+            SettlementsRelationManager::class,
         ];
     }
     

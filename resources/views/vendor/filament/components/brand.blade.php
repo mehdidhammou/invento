@@ -1,1 +1,1 @@
-<img src="{{ asset('favicon.svg') }}" alt="Logo" class="h-10">
+<span class="font-bold text-xl text-primary-400 ">invento</span>

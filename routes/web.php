@@ -1,7 +1,8 @@
 <?php
 
-use App\Enums\PurchaseStatusEnum;
+use App\Models\Order;
 use App\Models\ProductType;
+use App\Enums\PurchaseStatusEnum;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
@@ -29,13 +30,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/order/export/{id}', [Controller::class, 'exportOrder'])->name('orders.export');
+    Route::get('/test/{id}', function($id){
+        return view('export.order', ['order' => Order::find($id)]);
+    });
 });
+
+
 
 Route::get('query', [Controller::class, 'query'])->name('query');
 
-Route::get('test/', function () {
-    dd(PurchaseStatusEnum::values());
-});
 
 require __DIR__.'/auth.php';
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ProductTypeResource\RelationManagers;
+namespace App\Filament\Resources\ClientResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -10,32 +10,33 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ProductsRelationManager extends RelationManager
+class SettlementsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'products';
+    protected static string $relationship = 'settlements';
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute = 'amount';
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([]);
+            ->schema([
+                Forms\Components\TextInput::make('amount')
+                    ->required()
+                    ->maxLength(255),
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('price')->money('DZD', true),
-                Tables\Columns\TextColumn::make('total_quantity'),
+                Tables\Columns\TextColumn::make('amount'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->url(route('filament.resources.products.create')),
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -44,5 +45,5 @@ class ProductsRelationManager extends RelationManager
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }
+    }    
 }

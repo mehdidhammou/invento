@@ -43,9 +43,6 @@ class UserResource extends Resource
                     ->required(fn (string $context): bool => $context === 'create'),
                 Forms\Components\Toggle::make('is_admin')
                     ->required(),
-                    Forms\Components\Select::make('role')
-                    ->options(PurchaseStatusEnum::enumOptions())
-                    ->enum(\App\Enums\PurchaseStatusEnum::class)
             ]);
     }
 

@@ -22,12 +22,17 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function orders()
+    // public function orders()
+    // {
+    //     return $this->belongsToMany(Order::class)
+    //         ->using(OrderProduct::class)
+    //         ->withPivot('quantity', 'unit_price', 'sale_price')
+    //         ->withTimestamps();
+    // }
+
+    public function orderProducts()
     {
-        return $this->belongsToMany(Order::class)
-            ->using(OrderProduct::class)
-            ->withPivot('quantity', 'unit_price', 'sale_price')
-            ->withTimestamps();
+        return $this->hasMany(OrderProduct::class);
     }
 
     public function sales()

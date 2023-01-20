@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\Client;
-use App\Models\ProductType;
-use App\Models\Sale;
-use App\Services\ProductTypeService;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Models\Order;
+use App\Services\OrderService;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Controller extends BaseController
 {
@@ -20,6 +17,13 @@ class Controller extends BaseController
     public function query()
     {
 
-        return ProductTypeService::getBestSellingProducts();
+    }
+
+
+    public function exportOrder($id)
+    {
+        $order = Order::where('id', $id)->with('orderProducts.product:id,name')->first();
+        $pdf = FacadePdf::loadView('export.order', compact('order'));
+        return $pdf->download(OrderService::getOrderFilename($order));
     }
 }
