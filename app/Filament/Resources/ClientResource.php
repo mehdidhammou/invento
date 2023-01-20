@@ -19,7 +19,8 @@ class ClientResource extends Resource
 
     protected static ?string $navigationGroup = 'Partners';
 
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -67,7 +68,7 @@ class ClientResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
@@ -75,7 +76,7 @@ class ClientResource extends Resource
             SettlementsRelationManager::class,
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -83,5 +84,5 @@ class ClientResource extends Resource
             'create' => Pages\CreateClient::route('/create'),
             'edit' => Pages\EditClient::route('/{record}/edit'),
         ];
-    }    
+    }
 }

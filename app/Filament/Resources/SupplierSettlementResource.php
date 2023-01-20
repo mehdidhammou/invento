@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PurchaseResource\Pages;
-use App\Filament\Resources\PurchaseResource\RelationManagers;
-use App\Models\Purchase;
+use App\Filament\Resources\SupplierSettlementResource\Pages;
+use App\Filament\Resources\SupplierSettlementResource\RelationManagers;
+use App\Models\SupplierSettlement;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -13,25 +13,23 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PurchaseResource extends Resource
+class SupplierSettlementResource extends Resource
 {
-    protected static ?string $model = Purchase::class;
+    protected static ?string $model = SupplierSettlement::class;
 
-    protected static ?string $navigationGroup = 'Transactions';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-check';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationGroup = 'Settlements';
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('product_id')
-                    ->relationship('product', 'name')->required(),
-                Forms\Components\Select::make('supplier_id')
-                    ->relationship('supplier', 'name')->required(),
-                Forms\Components\TextInput::make('quantity')
+                Forms\Components\TextInput::make('supplier_id'),
+                Forms\Components\TextInput::make('amount')
                     ->required(),
-                Forms\Components\TextInput::make('price')
+                Forms\Components\DatePicker::make('date')
                     ->required(),
             ]);
     }
@@ -40,10 +38,10 @@ class PurchaseResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('product.name'),
-                Tables\Columns\TextColumn::make('supplier.name'),
-                Tables\Columns\TextColumn::make('quantity'),
-                Tables\Columns\TextColumn::make('price'),
+                Tables\Columns\TextColumn::make('supplier_id'),
+                Tables\Columns\TextColumn::make('amount'),
+                Tables\Columns\TextColumn::make('date')
+                    ->date(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
@@ -70,9 +68,9 @@ class PurchaseResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPurchases::route('/'),
-            'create' => Pages\CreatePurchase::route('/create'),
-            'edit' => Pages\EditPurchase::route('/{record}/edit'),
+            'index' => Pages\ListSupplierSettlements::route('/'),
+            'create' => Pages\CreateSupplierSettlement::route('/create'),
+            'edit' => Pages\EditSupplierSettlement::route('/{record}/edit'),
         ];
     }    
 }

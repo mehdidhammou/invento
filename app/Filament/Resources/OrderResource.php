@@ -34,7 +34,10 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-plus-circle';
+
+    protected static ?string $navigationGroup = 'Transactions';
+
 
     public static function form(Form $form): Form
     {

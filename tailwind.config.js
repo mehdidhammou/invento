@@ -9,15 +9,16 @@ module.exports = {
         './resources/views/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
     ],
-    darkMode: 'class', // or 'media' or 'class'
+
+    darkMode: 'class',
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Nunito', ...defaultTheme.fontFamily.sans],
             },
-            colors: { 
+            colors: {
                 danger: colors.rose,
-                primary: colors.blue,
+                primary: colors.sky,
                 success: colors.green,
                 warning: colors.yellow,
             },

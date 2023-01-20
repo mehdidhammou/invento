@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\OrderStatusEnum;
-use App\Filament\Resources\ClientSettlementResource\Pages;
-use App\Filament\Resources\ClientSettlementResource\RelationManagers;
-use App\Models\ClientSettlement;
+use App\Filament\Resources\BLResource\Pages;
+use App\Filament\Resources\BLResource\RelationManagers;
+use App\Models\BL;
 use Filament\Forms;
-use Filament\Forms\Components\Select;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -15,27 +13,26 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ClientSettlementResource extends Resource
+class BLResource extends Resource
 {
-    protected static ?string $model = ClientSettlement::class;
+    protected static ?string $model = BL::class;
 
-    protected static ?string $navigationGroup = 'Settlements';
+    protected static ?string $label = 'Bills Of Lading';
 
+    protected static ?string $navigationGroup = 'Documents';
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-check';
+    protected static ?string $navigationIcon = 'heroicon-o-document-add';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('client_id')
-                ->relationship('client', 'name'),
-                Forms\Components\TextInput::make('amount')
-                    ->placeholder('0.00')
-                    ->required(),
+                Forms\Components\TextInput::make('order_id'),
+                Forms\Components\TextInput::make('number')
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\DatePicker::make('date')
                     ->required(),
-                    Select::make('status')->options(OrderStatusEnum::enumOptions())
             ]);
     }
 
@@ -43,8 +40,8 @@ class ClientSettlementResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('client_id'),
-                Tables\Columns\TextColumn::make('amount'),
+                Tables\Columns\TextColumn::make('order_id'),
+                Tables\Columns\TextColumn::make('number'),
                 Tables\Columns\TextColumn::make('date')
                     ->date(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -57,17 +54,25 @@ class ClientSettlementResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
     
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+    
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageClientSettlements::route('/'),
+            'index' => Pages\ListBLS::route('/'),
+            'create' => Pages\CreateBL::route('/create'),
+            'edit' => Pages\EditBL::route('/{record}/edit'),
         ];
     }    
 }

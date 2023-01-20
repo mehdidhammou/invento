@@ -28,6 +28,15 @@ class FilamentServiceProvider extends ServiceProvider
         Filament::serving(function () {
             // Using Vite
             Filament::registerViteTheme('resources/css/filament.css');
+
+            Filament::registerNavigationGroups([
+                'Inventory',
+                'Transactions',
+                'Partners',
+                'Documents',
+                'Settlements',
+                'Admins',
+            ]);
         });
     }
 }
