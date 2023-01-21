@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Client;
+use App\Models\ClientSettlement;
 use App\Observers\ClientObserver;
+use App\Observers\ClientSettlementObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,5 +32,6 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Client::observe(ClientObserver::class);
+        ClientSettlement::observe(ClientSettlementObserver::class);
     }
 }

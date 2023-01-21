@@ -6,12 +6,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "alperenersoy/filament-export": "^0.2.4",
+        "barryvdh/laravel-dompdf": "^2.0",
         "filament/filament": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "spatie/browsershot": "^3.57",
         "staudenmeir/belongs-to-through": "^2.12",
         "staudenmeir/eloquent-has-many-deep": "^1.17"
     },

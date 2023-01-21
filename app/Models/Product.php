@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\OrderStatusEnum;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
@@ -16,6 +17,10 @@ class Product extends Model
         'category_id',
     ];
 
+    protected $appends = [
+        'latest_price',
+        'latest_order',
+    ];
 
     public function category()
     {
@@ -35,11 +40,34 @@ class Product extends Model
         return $this->hasMany(OrderProduct::class);
     }
 
-    public function sales()
+    public function getLatestPriceAttribute()
     {
-        return $this->belongsToMany(Sale::class)
-            ->using(SaleProduct::class)
-            ->withPivot('quantity', 'unit_price', 'sale_price')
-            ->withTimestamps();
+        return DB::table('order_product')
+            ->join('orders', 'orders.id', '=', 'order_product.order_id')
+            ->where('orders.status', '!=', OrderStatusEnum::CANCELED->name)
+            ->where('product_id', $this->id)
+            ->orderBy('orders.date', 'desc')
+            ->first()
+            ->sale_price ?? 0;
     }
+
+    public function getLatestOrderAttribute()
+    {
+        return DB::table('order_product')
+            ->join('orders', 'orders.id', '=', 'order_product.order_id')
+            ->where('orders.status', '!=', OrderStatusEnum::CANCELED->name)
+            ->where('order_product.product_id', $this->id)
+            ->orderBy('orders.date', 'desc')
+            ->first()
+            ->order_id ?? 'N/A';
+    }
+
+
+    // public function sales()
+    // {
+    //     return $this->belongsToMany(Sale::class)
+    //         ->using(SaleProduct::class)
+    //         ->withPivot('quantity', 'unit_price', 'sale_price')
+    //         ->withTimestamps();
+    // }
 }

@@ -26,11 +26,12 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('category_id'),
+                Forms\Components\Select::make('category_id')->relationship('category', 'name'),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('total_quantity')
+                    ->disabled(fn (string $context) => $context === 'create')
                     ->required(),
             ]);
     }
@@ -39,13 +40,17 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('category_id'),
+                Tables\Columns\TextColumn::make('category.name'),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('total_quantity'),
+                Tables\Columns\TextColumn::make('latest_price')->money('DZD', true),
+                Tables\Columns\TextColumn::make('latest_order'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->since(),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->since(),
             ])
             ->filters([
                 //
@@ -57,14 +62,14 @@ class ProductResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
-            //
+            
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -72,5 +77,5 @@ class ProductResource extends Resource
             'create' => Pages\CreateProduct::route('/create'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
-    }    
+    }
 }

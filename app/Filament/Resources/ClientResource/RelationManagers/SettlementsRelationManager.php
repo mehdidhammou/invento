@@ -3,12 +3,14 @@
 namespace App\Filament\Resources\ClientResource\RelationManagers;
 
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Livewire\LivewireManager;
 
 class SettlementsRelationManager extends RelationManager
 {
@@ -21,8 +23,15 @@ class SettlementsRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\TextInput::make('amount')
+                    ->numeric()
+                    ->minValue(0)
+                    ->maxValue(function (RelationManager $livewire) {
+                        return $livewire->ownerRecord->balance;
+                    })
+                    ->required(),
+                DatePicker::make('date')
                     ->required()
-                    ->maxLength(255),
+                    ->default(now()),
             ]);
     }
 
@@ -31,6 +40,8 @@ class SettlementsRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('amount'),
+                Tables\Columns\TextColumn::make('date')
+                    ->date(),
             ])
             ->filters([
                 //
@@ -45,5 +56,5 @@ class SettlementsRelationManager extends RelationManager
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }    
+    }
 }

@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sale;
 use App\Models\Order;
+use App\Models\Product;
+use App\Enums\OrderStatusEnum;
+use App\Models\Category;
 use App\Services\OrderService;
-use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+use Spatie\Browsershot\Browsershot;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -16,14 +22,30 @@ class Controller extends BaseController
 
     public function query()
     {
-
+        return [];
     }
 
-
-    public function exportOrder($id)
+    public function showOrder($id)
     {
-        $order = Order::where('id', $id)->with('orderProducts.product:id,name')->first();
-        $pdf = FacadePdf::loadView('export.order', compact('order'));
-        return $pdf->download(OrderService::getOrderFilename($order));
+        $order = Order::where('id', 11)
+            ->with(
+                [
+                    'orderProducts' => fn ($query) => $query->with('product'),
+                    'supplier'
+                ]
+            )
+            ->first();
+        return view('export.order', compact('order'));
+    }
+
+    public function showSale($id)
+    {
+        $sale = Sale::where('id', $id)->with(
+            [
+                'saleProducts' => fn ($query) => $query->with('product'),
+                'client'
+            ]
+        )->first();
+        return view('export.sale', compact('sale'));
     }
 }

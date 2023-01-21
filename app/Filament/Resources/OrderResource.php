@@ -51,16 +51,17 @@ class OrderResource extends Resource
                                 ->relationship('supplier', 'name')
                                 ->preload()
                                 ->required(),
+                            TextInput::make('total_price')
+                                ->disabled()
+                                ->required()
+                                ->default(0),
                             TextInput::make('total_paid')
-                                ->disabled(
-                                    fn (string $context) => $context === 'create'
-                                )
+                                ->disabled(fn (string $context) => $context === 'create')
+                                ->lte('total_price')
                                 ->required()
                                 ->default(0),
                             TextInput::make('discount')
-                                ->disabled(
-                                    fn (string $context) => $context === 'create'
-                                )
+                                ->disabled(fn (string $context) => $context === 'create')
                                 ->default(0)
                                 ->required()
                                 ->minValue(0)
@@ -128,11 +129,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('date')
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'success' => 'PAID',
-                        'warning' => 'PENDING',
-                        'danger' => 'CANCELLED',
-                    ])
+                    ->colors(OrderStatusEnum::enumColors())
                     ->sortable()
                     ->searchable(),
 
@@ -145,7 +142,7 @@ class OrderResource extends Resource
             ->actions([
                 Tables\Actions\Action::make('Export')
                     ->icon('heroicon-o-download')
-                    ->url(fn ($record) => route('orders.export', $record->id)),
+                    ->url(fn ($record) => route('export.order', $record->id)),
                 Tables\Actions\EditAction::make()
             ])
             ->bulkActions([

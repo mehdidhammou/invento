@@ -21,7 +21,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect('/admin');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -29,13 +29,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/order/export/{id}', [Controller::class, 'exportOrder'])->name('orders.export');
-    Route::get('/test/{id}', function($id){
-        return view('export.order', ['order' => Order::find($id)]);
+    Route::prefix('export/')->group(function (){
+        Route::get('order/{id}', [Controller::class, 'showOrder'])->name('export.order');
+        Route::get('sale/{id}', [Controller::class , 'showSale'])->name('export.sale');
     });
 });
-
-
 
 Route::get('query', [Controller::class, 'query'])->name('query');
 

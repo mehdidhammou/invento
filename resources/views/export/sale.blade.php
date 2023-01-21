@@ -3,16 +3,16 @@
         <div class="w-full p-4 border border-gray-200 rounded-md">
             <div class="w-full flex items-center justify-around">
                 <h1 class="font-semibold">
-                    Order ID:
+                    Sale ID:
                 </h1>
                 <span>
-                    {{ $order->id }}
+                    {{ $sale->id }}
                 </span>
                 <h1 class="font-semibold">
                     Order Date:
                 </h1>
                 <span>
-                    {{ $order->date }}
+                    {{ $sale->date }}
                 </span>
 
             </div>
@@ -26,24 +26,30 @@
                     <th scope="col" class="px-6 py-3">
                         Quantity
                     </th>
+                    <th scope="col" class="px-6 py-3">
+                        Price
+                    </th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($order->orderProducts as $orderProduct)
+                @foreach ($sale->saleProducts as $saleProduct)
                     <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
                         <td class="px-6 py-4">
-                            {{ $orderProduct->product->name }}
+                            {{ $saleProduct->product->name }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ $orderProduct->quantity }}
+                            {{ $saleProduct->quantity }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ $saleProduct->unit_price }}
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-        <div class="w-full flex items-center justify-end">
+        <div class="w-full flex items-center justify-between gap-4">
             <div class="w-1/2 border border-gray-200 rounded-md p-4">
-                <h1 class="font-semibold uppercase">Supplier Info</h1>
+                <h1 class="font-semibold uppercase">Client Info</h1>
                 <hr class="w-full bg-gray-600 my-2">
                 <div class="flex flex-col gap-2">
                     <div class="w-full flex justify-between">
@@ -51,7 +57,7 @@
                             Name:
                         </p>
                         <p class="font-semibold">
-                            {{ $order->supplier->name }}
+                            {{ $sale->client->name }}
                         </p>
                     </div>
                     <hr class="w-full bg-gray-600 my-2">
@@ -60,7 +66,7 @@
                             Address:
                         </p>
                         <p class="font-semibold">
-                            {{ $order->supplier->email }}
+                            {{ $sale->client->email }}
                         </p>
                     </div>
                     <hr class="w-full bg-gray-600 my-2">
@@ -69,11 +75,42 @@
                             Phone:
                         </p>
                         <p class="font-semibold">
-                            {{ $order->supplier->phone }}
+                            {{ $sale->client->phone }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="w-1/2 border border-gray-200 rounded-md p-4">
+                <h1 class="font-semibold uppercase">Summary</h1>
+                <hr class="w-full bg-gray-600 my-2">
+                <div class="flex flex-col gap-2">
+                    <div class="w-full flex justify-between">
+                        <p>
+                            Total HT:
+                        </p>
+                        <p class="font-semibold">
+                            {{ $sale->total_price }}
+                        </p>
+                    </div>
+                    <hr class="w-full bg-gray-600 my-2">
+                    <div class="w-full flex justify-between">
+                        <p>
+                            TVA:
+                        </p>
+                        <p class="font-semibold">
+                            20%
+                        </p>
+                    </div>
+                    <hr class="w-full bg-gray-600 my-2">
+                    <div class="w-full flex justify-between">
+                        <p>
+                            Total TTC:
+                        </p>
+                        <p class="font-semibold">
+                            {{ $sale->total_price * 1.2 }}
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 </x-export-layout>

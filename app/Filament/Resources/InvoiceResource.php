@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\RelationManagers;
+use App\Filament\Resources\InvoiceResource\RelationManagers\OrderRelationManager;
 use App\Models\Invoice;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -39,14 +40,23 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('order_id'),
-                Tables\Columns\TextColumn::make('number'),
+                Tables\Columns\TextColumn::make('order.supplier.name')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('number')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('date')
-                    ->date(),
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->since()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->since()
+                    ->sortable(),
             ])
             ->filters([
                 //
@@ -62,7 +72,7 @@ class InvoiceResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            OrderRelationManager::class,
         ];
     }
     

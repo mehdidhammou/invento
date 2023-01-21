@@ -18,12 +18,18 @@ class Sale extends Model
         'status',
     ];
 
-    public function products()
+
+    // public function products()
+    // {
+    //     return $this->belongsToMany(Product::class)
+    //         ->using(SaleProduct::class)
+    //         ->withPivot('quantity', 'unit_price', 'sale_price')
+    //         ->withTimestamps();
+    // }
+
+    public function saleProducts()
     {
-        return $this->belongsToMany(Product::class)
-            ->using(SaleProduct::class)
-            ->withPivot('quantity', 'unit_price', 'sale_price')
-            ->withTimestamps();
+        return $this->hasMany(SaleProduct::class);
     }
 
     public function client()

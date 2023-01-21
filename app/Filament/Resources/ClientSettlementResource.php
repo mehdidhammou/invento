@@ -35,7 +35,6 @@ class ClientSettlementResource extends Resource
                     ->required(),
                 Forms\Components\DatePicker::make('date')
                     ->required(),
-                    Select::make('status')->options(OrderStatusEnum::enumOptions())
             ]);
     }
 
@@ -43,8 +42,8 @@ class ClientSettlementResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('client_id'),
-                Tables\Columns\TextColumn::make('amount'),
+                Tables\Columns\TextColumn::make('client.name'),
+                Tables\Columns\TextColumn::make('amount')->money('DZD', true),
                 Tables\Columns\TextColumn::make('date')
                     ->date(),
                 Tables\Columns\TextColumn::make('created_at')

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\BLResource\Pages;
 use App\Filament\Resources\BLResource\RelationManagers;
+use App\Filament\Resources\BLResource\RelationManagers\OrderRelationManager;
 use App\Models\BL;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -27,7 +28,8 @@ class BLResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('order_id'),
+                Forms\Components\Select::make('order_id')
+                    ->relationship('order', 'id'),
                 Forms\Components\TextInput::make('number')
                     ->required()
                     ->maxLength(255),
@@ -40,17 +42,26 @@ class BLResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('order_id'),
-                Tables\Columns\TextColumn::make('number'),
-                Tables\Columns\TextColumn::make('date')
-                    ->date(),
+                Tables\Columns\TextColumn::make('order.supplier.name')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('number')
+                    ->sortable()
+                    ->searchable(),
+                    Tables\Columns\TextColumn::make('date')
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->since()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->since()
+                    ->sortable(),
             ])
             ->filters([
-                //
+                // 
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -59,14 +70,14 @@ class BLResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
-            //
+            OrderRelationManager::class,
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -74,5 +85,5 @@ class BLResource extends Resource
             'create' => Pages\CreateBL::route('/create'),
             'edit' => Pages\EditBL::route('/{record}/edit'),
         ];
-    }    
+    }
 }
