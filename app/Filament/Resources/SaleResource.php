@@ -12,6 +12,7 @@ use Filament\Resources\Table;
 use App\Enums\OrderStatusEnum;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
@@ -27,7 +28,7 @@ use App\Filament\Resources\SaleResource\Pages\EditSale;
 use App\Filament\Resources\SaleResource\Pages\ListSales;
 use App\Filament\Resources\SaleResource\Pages\CreateSale;
 use App\Filament\Resources\SaleResource\RelationManagers;
-use Filament\Tables\Actions\Action;
+use App\Filament\Resources\SaleResource\RelationManagers\SaleProductsRelationManager;
 
 class SaleResource extends Resource
 {
@@ -73,43 +74,7 @@ class SaleResource extends Resource
                                 ->options(OrderStatusEnum::enumOptions())
                                 ->required(),
                         ])
-                    ]),
-                Section::make('Sale Products')->schema([
-                    Repeater::make('saleProducts')
-                        ->relationship()
-                        ->columnSpanFull()
-                        ->columns(4)
-                        ->schema([
-                            Select::make('product_id')
-                                ->options(Product::pluck('name', 'id'))
-                                ->label('Product')
-                                ->required()
-                                ->reactive()
-                                ->afterStateUpdated(function ($state, callable $set) {
-                                    $latest_price = Product::where('id', $state)->first()->latest_price;
-                                    $set('unit_price', $latest_price);
-                                }),
-                            TextInput::make('quantity')
-                                ->required()
-                                ->numeric()
-                                ->minValue(0),
-                            TextInput::make('unit_price')
-                                ->numeric()
-                                ->required()
-                                ->disabled()
-                                ->minValue(0),
-                            TextInput::make('sale_price')
-                                ->numeric()
-                                ->minValue(0)
-                                ->required()
-                                ->disabled(
-                                    fn (string $context) => $context === 'create'
-                                )
-                                ->default(0)
-                                ->minValue(0),
-                        ])
-                        ->createItemButtonLabel('+')
-                ])
+                    ])
             ]);
     }
 
@@ -155,7 +120,7 @@ class SaleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            SaleProductsRelationManager::class,
         ];
     }
 
