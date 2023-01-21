@@ -5,8 +5,10 @@ namespace App\Providers;
 use App\Models\Client;
 use App\Models\ClientSettlement;
 use App\Observers\ClientObserver;
-use App\Observers\ClientSettlementObserver;
+use App\Models\SupplierSettlement;
 use Illuminate\Support\ServiceProvider;
+use App\Observers\ClientSettlementObserver;
+use App\Observers\SupplierSettlementObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,11 +29,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if($this->app->environment('production')) {
+        if ($this->app->environment('production')) {
             \URL::forceScheme('https');
         }
 
         Client::observe(ClientObserver::class);
         ClientSettlement::observe(ClientSettlementObserver::class);
+        SupplierSettlement::observe(SupplierSettlementObserver::class);
     }
 }

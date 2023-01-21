@@ -7,6 +7,7 @@ use App\Models\Sale;
 use Filament\Tables;
 use App\Models\Product;
 use Filament\Resources\Form;
+use App\Enums\SaleStatusEnum;
 use Filament\Resources\Table;
 use App\Enums\OrderStatusEnum;
 use Filament\Resources\Resource;
@@ -17,6 +18,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Tables\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\SaleResource\Pages;
@@ -25,6 +27,7 @@ use App\Filament\Resources\SaleResource\Pages\EditSale;
 use App\Filament\Resources\SaleResource\Pages\ListSales;
 use App\Filament\Resources\SaleResource\Pages\CreateSale;
 use App\Filament\Resources\SaleResource\RelationManagers;
+use Filament\Tables\Actions\Action;
 
 class SaleResource extends Resource
 {
@@ -68,7 +71,7 @@ class SaleResource extends Resource
                                 ->required(),
                             Select::make('status')
                                 ->options(OrderStatusEnum::enumOptions())
-                                ->default('PENDING'),
+                                ->required(),
                         ])
                     ]),
                 Section::make('Sale Products')->schema([
@@ -82,7 +85,7 @@ class SaleResource extends Resource
                                 ->label('Product')
                                 ->required()
                                 ->reactive()
-                                ->afterStateUpdated(function ($state, callable $set){
+                                ->afterStateUpdated(function ($state, callable $set) {
                                     $latest_price = Product::where('id', $state)->first()->latest_price;
                                     $set('unit_price', $latest_price);
                                 }),
@@ -114,26 +117,48 @@ class SaleResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('client.name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('total_price')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('total_paid')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('discount')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->colors(SaleStatusEnum::enumColors())
+                    ->sortable(),
+
+
+
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->multiple()
+                    ->options(SaleStatusEnum::enumOptions())
+                    ->placeholder('All Statuses'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Action::make('export')
+                    ->icon('heroicon-o-download')
+                    ->url(fn ($record) => route('export.sale', $record->id)),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -141,5 +166,5 @@ class SaleResource extends Resource
             'create' => Pages\CreateSale::route('/create'),
             'edit' => Pages\EditSale::route('/{record}/edit'),
         ];
-    }    
+    }
 }

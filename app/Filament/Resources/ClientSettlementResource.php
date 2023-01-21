@@ -29,7 +29,8 @@ class ClientSettlementResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('client_id')
-                ->relationship('client', 'name'),
+                    ->relationship('client', 'name')
+                    ->required(),
                 Forms\Components\TextInput::make('amount')
                     ->placeholder('0.00')
                     ->required(),
@@ -62,11 +63,11 @@ class ClientSettlementResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ManageClientSettlements::route('/'),
         ];
-    }    
+    }
 }

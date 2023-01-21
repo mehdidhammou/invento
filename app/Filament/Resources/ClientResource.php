@@ -52,7 +52,9 @@ class ClientResource extends Resource
                 Tables\Columns\TextColumn::make('surname'),
                 Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\TextColumn::make('phone'),
-                Tables\Columns\TextColumn::make('balance'),
+                Tables\Columns\TextColumn::make('balance')
+                    ->sortable()
+                    ->money('DZD', true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')

@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SupplierSettlementResource\Pages;
-use App\Filament\Resources\SupplierSettlementResource\RelationManagers;
-use App\Models\SupplierSettlement;
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
+use App\Models\Supplier;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Resources\Resource;
+use App\Models\SupplierSettlement;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\SupplierSettlementResource\Pages;
+use App\Filament\Resources\SupplierSettlementResource\RelationManagers;
 
 class SupplierSettlementResource extends Resource
 {
@@ -26,10 +27,25 @@ class SupplierSettlementResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('supplier_id'),
+                Forms\Components\Select::make('supplier_id')
+                    ->relationship('supplier', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 Forms\Components\TextInput::make('amount')
+                    ->default(0)
+                    ->disabled(fn (string $context) => $context === 'create')
+                    ->numeric()
+                    ->maxValue(function (string $context, callable $get) {
+                        if ($context == 'create') {
+                            return 0;
+                        } else {
+                            return Supplier::find($get("supplier_id"))->balance;
+                        }
+                    })
                     ->required(),
                 Forms\Components\DatePicker::make('date')
+                    ->default(now())
                     ->required(),
             ]);
     }
@@ -38,8 +54,11 @@ class SupplierSettlementResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('supplier_id'),
-                Tables\Columns\TextColumn::make('amount'),
+                Tables\Columns\TextColumn::make('supplier.name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('amount')
+                    ->money('DZD', true),
                 Tables\Columns\TextColumn::make('date')
                     ->date(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -57,14 +76,14 @@ class SupplierSettlementResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -72,5 +91,5 @@ class SupplierSettlementResource extends Resource
             'create' => Pages\CreateSupplierSettlement::route('/create'),
             'edit' => Pages\EditSupplierSettlement::route('/{record}/edit'),
         ];
-    }    
+    }
 }

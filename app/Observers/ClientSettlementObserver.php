@@ -43,7 +43,9 @@ class ClientSettlementObserver
      */
     public function deleted(ClientSettlement $clientSettlement)
     {
-        //
+        $client = $clientSettlement->client;
+        $client->balance += $clientSettlement->amount;
+        $client->save();
     }
 
     /**

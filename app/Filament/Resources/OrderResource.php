@@ -130,8 +130,7 @@ class OrderResource extends Resource
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors(OrderStatusEnum::enumColors())
-                    ->sortable()
-                    ->searchable(),
+                    ->sortable(),
 
             ])
             ->filters([
