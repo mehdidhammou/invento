@@ -40,16 +40,26 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('category.name'),
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('total_quantity'),
-                Tables\Columns\TextColumn::make('latest_price')->money('DZD', true),
-                Tables\Columns\TextColumn::make('latest_order'),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('total_quantity')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('latest_price')
+                    ->money('DZD', true)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('latest_order')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
+                    ->sortable()
                     ->since(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
+                    ->sortable()
                     ->since(),
             ])
             ->filters([
@@ -65,9 +75,7 @@ class ProductResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            
-        ];
+        return [];
     }
 
     public static function getPages(): array
