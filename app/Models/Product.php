@@ -18,7 +18,7 @@ class Product extends Model
     ];
 
     protected $appends = [
-        'latest_price',
+        'latest_unit_price',
         'latest_order',
     ];
 
@@ -40,22 +40,37 @@ class Product extends Model
         return $this->hasMany(OrderProduct::class);
     }
 
-    public function getLatestPriceAttribute()
+    public function getLatestUnitPriceAttribute()
     {
         return DB::table('order_product')
             ->join('orders', 'orders.id', '=', 'order_product.order_id')
-            ->where('orders.status', '!=', OrderStatusEnum::CANCELED->name)
+            ->where('orders.status', '!=', OrderStatusEnum::DELIVERED->name)
+            ->where('product_id', $this->id)
+            ->orderBy('orders.date', 'desc')
+            ->first()
+            ->unit_price ?? 0;
+    }
+    public function getLatestSalePriceAttribute()
+    {
+        return DB::table('order_product')
+            ->join('orders', 'orders.id', '=', 'order_product.order_id')
+            ->where('orders.status', '!=', OrderStatusEnum::DELIVERED->name)
             ->where('product_id', $this->id)
             ->orderBy('orders.date', 'desc')
             ->first()
             ->sale_price ?? 0;
     }
 
+    public function scopeBestSelling($query)
+    {
+        return $query->withSum('orderProducts', 'quantity');
+    }
+
     public function getLatestOrderAttribute()
     {
         return DB::table('order_product')
             ->join('orders', 'orders.id', '=', 'order_product.order_id')
-            ->where('orders.status', '!=', OrderStatusEnum::CANCELED->name)
+            ->where('orders.status', '!=', OrderStatusEnum::DELIVERED->name)
             ->where('order_product.product_id', $this->id)
             ->orderBy('orders.date', 'desc')
             ->first()

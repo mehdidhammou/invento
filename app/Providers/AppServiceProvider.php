@@ -5,11 +5,13 @@ namespace App\Providers;
 use App\Models\Client;
 use App\Models\SaleProduct;
 use App\Models\ClientSettlement;
+use App\Models\Sale;
 use App\Observers\ClientObserver;
 use App\Models\SupplierSettlement;
 use App\Observers\SaleProductObserver;
 use Illuminate\Support\ServiceProvider;
 use App\Observers\ClientSettlementObserver;
+use App\Observers\SaleObserver;
 use App\Observers\SupplierSettlementObserver;
 
 class AppServiceProvider extends ServiceProvider
@@ -38,6 +40,6 @@ class AppServiceProvider extends ServiceProvider
         Client::observe(ClientObserver::class);
         ClientSettlement::observe(ClientSettlementObserver::class);
         SupplierSettlement::observe(SupplierSettlementObserver::class);
-        SaleProduct::observe(SaleProductObserver::class);
+        Sale::observe(SaleObserver::class);
     }
 }

@@ -52,16 +52,25 @@ class SaleResource extends Resource
                                 ->preload()
                                 ->required(),
                             TextInput::make('total_price')
-                                ->disabled()
                                 ->required()
+                                ->numeric()
+                                ->disabledOn('create')
                                 ->default(0),
-                            TextInput::make('total_paid')
-                                ->disabled(fn (string $context) => $context === 'create')
+                                TextInput::make('total_paid')
+                                ->disabledOn('create')
+                                ->numeric()
+                                ->placeholder('modifiable after creating the sale')
                                 ->lte('total_price')
-                                ->required()
-                                ->default(0),
+                                ->maxValue(
+                                    function (callable $get) {
+                                        if ($get('total_price') && $get('discount')) {
+                                            return $get('total_price') - $get('total_price') * ($get('discount') / 100);
+                                        }
+                                    }
+                                    )
+                                    ->required()
+                                    ->default(0),
                             TextInput::make('discount')
-                                ->disabled(fn (string $context) => $context === 'create')
                                 ->default(0)
                                 ->required()
                                 ->minValue(0)
@@ -73,6 +82,50 @@ class SaleResource extends Resource
                             Select::make('status')
                                 ->options(OrderStatusEnum::enumOptions())
                                 ->required(),
+                        ])
+                    ]),
+
+                Repeater::make('saleProducts')
+                    ->relationship()
+                    ->columnSpanFull()
+                    ->schema([
+                        Grid::make(4)->schema([
+                            Select::make('product_id')
+                                ->relationship('product', 'name', function (Builder $query) {
+                                    $query->where('total_quantity', '>', 0);
+                                })
+                                ->preload()
+                                ->label('Product')
+                                ->required()
+                                ->reactive()
+                                ->afterStateUpdated(function ($state, callable $set) {
+                                    $product = Product::where('id', $state)->first();
+                                    $set('unit_price', $product->latest_price);
+                                }),
+                            TextInput::make('quantity')
+                                ->required()
+                                ->reactive()
+                                ->numeric()
+                                ->placeholder(
+                                    function (callable $get) {
+                                        if ($get('product_id')) {
+                                            return 'max: ' . Product::where('id', $get('product_id'))->first()->total_quantity;
+                                        }
+                                        return 'max: 0';
+                                    }
+                                )
+                                ->maxValue(fn (callable $get) => $get('product_id') ? Product::where('id', $get('product_id'))->first()->total_quantity : 0)
+                                ->minValue(0),
+                            TextInput::make('unit_price')
+                                ->numeric()
+                                ->required()
+                                ->disabled()
+                                ->minValue(0),
+                            TextInput::make('sale_price')
+                                ->numeric()
+                                ->required()
+                                ->gte('unit_price')
+                                ->minValue(0),
                         ])
                     ])
             ]);
@@ -96,9 +149,6 @@ class SaleResource extends Resource
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors(SaleStatusEnum::enumColors())
                     ->sortable(),
-
-
-
             ])
             ->filters([
                 SelectFilter::make('status')

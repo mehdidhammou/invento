@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Enums\OrderStatusEnum;
 use App\Models\Category;
+use App\Models\OrderProduct;
 use App\Services\OrderService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,6 @@ class Controller extends BaseController
 
     public function query()
     {
-        return [];
     }
 
     public function showOrder($id)

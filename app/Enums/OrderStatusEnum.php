@@ -7,7 +7,7 @@ enum OrderStatusEnum
     case PAID;
     case SENT;
     case UNPAID;
-    case CANCELED;
+    case DELIVERED;
 
     public static function values()
     {
@@ -43,7 +43,7 @@ enum OrderStatusEnum
         $i = 0;
         foreach (self::cases() as $case) {
             $values[$colors[$i]] = $case->name;
-            $i++;
+            $i = ($i + 1) % count($colors);
         }
 
         return $values;

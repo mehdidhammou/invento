@@ -25,17 +25,7 @@ class SaleProductObserver
      */
     public function updated(SaleProduct $saleProduct)
     {
-        if ($saleProduct->isDirty('quantity')) {
-            $product = $saleProduct->product;
-            $product->total_quantity -= $saleProduct->quantity;
-            $product->save();
-        }
-
-        if ($saleProduct->isDirty('sale_price')) {
-            $sale = $saleProduct->sale;
-            $sale->total_price += $saleProduct->price;
-            $sale->save();
-        }
+ 
     }
 
     /**

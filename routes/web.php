@@ -4,6 +4,7 @@ use App\Models\Order;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use GuzzleHttp\RedirectMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,12 +18,12 @@ use App\Http\Controllers\ProfileController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('filament.auth.login');
 });
 
-Route::get('/dashboard', function () {
-    return redirect('/admin');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return redirect('/admin');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

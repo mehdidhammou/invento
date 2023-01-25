@@ -126,7 +126,24 @@
         <div class="w-full">
             {{ $slot }}
         </div>
+        <div class="w-full flex items-center justify-end">
+            {{-- print --}}
+            <button class="bg-blue-400 text-white px-4 py-2 rounded-md" id="print-button" onclick="printDocument()">
+                Print
+            </button>
+        </div>
     </div>
+    <script>
+        function printDocument() {
+            // temporary hide the print button
+            document.getElementById('print-button').style.display = 'none';
+            // print the document
+            window.print();
+            // show the print button
+            document.getElementById('print-button').style.display = 'block';
+
+        }
+    </script>
 </body>
 
 </html>

@@ -18,4 +18,14 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+
+    public function scopeBestSelling($query)
+    {
+        return $query->selectRaw('sum(quantity) as total_sold, categories.id, categories.name')
+        ->join('products', 'categories.id', '=', 'products.category_id')
+        ->join('order_product', 'products.id', '=', 'order_product.product_id')
+        ->groupBy('categories.id', 'categories.name')
+        ->orderBy('total_sold', 'desc');
+    }
 }
