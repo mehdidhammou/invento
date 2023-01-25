@@ -43,7 +43,7 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Order Details')
+                Section::make('Sale Details')
                     ->schema([
                         Grid::make(2)->schema([
                             Select::make('supplier_id')
@@ -52,16 +52,24 @@ class OrderResource extends Resource
                                 ->preload()
                                 ->required(),
                             TextInput::make('total_price')
-                                ->disabled()
                                 ->required()
+                                ->numeric()
+                                ->disabled()
                                 ->default(0),
                             TextInput::make('total_paid')
-                                ->disabled(fn (string $context) => $context === 'create')
+                                ->disabledOn('create')
+                                ->numeric()
                                 ->lte('total_price')
+                                ->maxValue(
+                                    function (callable $get) {
+                                        if ($get('total_price') && $get('discount')) {
+                                            return $get('total_price') - $get('total_price') * ($get('discount') / 100);
+                                        }
+                                    }
+                                )
                                 ->required()
                                 ->default(0),
                             TextInput::make('discount')
-                                ->disabled(fn (string $context) => $context === 'create')
                                 ->default(0)
                                 ->required()
                                 ->minValue(0)
@@ -72,18 +80,20 @@ class OrderResource extends Resource
                                 ->required(),
                             Select::make('status')
                                 ->options(OrderStatusEnum::enumOptions())
-                                ->default('PENDING'),
+                                ->default(OrderStatusEnum::PENDING->name)
+                                ->disabledOn('create')
+                                ->required(),
                         ])
                     ]),
-                Section::make('Order Products')->schema([
-                    Repeater::make('orderProducts')
-                        ->relationship()
-                        ->columnSpanFull()
-                        ->columns(4)
-                        ->schema([
+
+                Repeater::make('orderProducts')
+                    ->relationship()
+                    ->columnSpanFull()
+                    ->schema([
+                        Grid::make(4)->schema([
                             Select::make('product_id')
-                                ->options(Product::pluck('name', 'id'))
-                                ->label('Product')
+                                ->relationship('product', 'name')
+                                ->preload()
                                 ->required(),
                             TextInput::make('quantity')
                                 ->required()
@@ -92,23 +102,16 @@ class OrderResource extends Resource
                             TextInput::make('unit_price')
                                 ->numeric()
                                 ->required()
-                                ->disabled(
-                                    fn (string $context) => $context === 'create'
-                                )
-                                ->default(0)
+                                ->disabledOn('create')
                                 ->minValue(0),
                             TextInput::make('sale_price')
                                 ->numeric()
-                                ->minValue(0)
+                                ->disabledOn('create')
                                 ->required()
-                                ->disabled(
-                                    fn (string $context) => $context === 'create'
-                                )
-                                ->default(0)
+                                ->gte('unit_price')
                                 ->minValue(0),
                         ])
-                        ->createItemButtonLabel('+')
-                ])
+                    ])
             ]);
     }
 

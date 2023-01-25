@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Enums\SaleStatusEnum;
+use App\Models\Client;
 use App\Models\Sale;
 
 class SaleObserver
@@ -20,7 +21,9 @@ class SaleObserver
             $total += $saleProduct->sale_price * $saleProduct->quantity;
         }
         $sale->total_price = $total - ($total * $sale->discount / 100);
-        $sale->save();
+
+        $sale->client->balance += $sale->total_price - $sale->total_paid;
+        $sale->client->save();
     }
 
     /**
@@ -31,12 +34,44 @@ class SaleObserver
      */
     public function updated(Sale $sale)
     {
-        if($sale->isDirty('status') && $sale->status != SaleStatusEnum::CANCELED->name) {
-            foreach ($sale->saleProducts()->with('product')->get() as $saleProduct) {
-                $saleProduct->product->total_quantity -= $saleProduct->quantity;
-                $saleProduct->product->save();
+        if ($sale->isDirty('status')) {
+            if ($sale->getOriginal('status') == SaleStatusEnum::UNPAID->name && in_array($sale->status, [SaleStatusEnum::PAID->name, SaleStatusEnum::DESTOCKED->name])) {
+                foreach ($sale->saleProducts()->with('product')->get() as $saleProduct) {
+                    $saleProduct->product->total_quantity -= $saleProduct->quantity;
+                    $saleProduct->product->save();
+                }
             }
         }
+
+        if ($sale->isDirty('discount')) {
+            $total = 0;
+            foreach ($sale->saleProducts as $saleProduct) {
+                $total += $saleProduct->sale_price * $saleProduct->quantity;
+            }
+            $sale->total_price = $total - ($total * $sale->discount / 100);
+        }
+
+        if ($sale->isDirty('total_paid')) {
+            if ($sale->total_paid <= $sale->total_price) {
+                if ($sale->total_paid == $sale->total_price) {
+                    $sale->status = SaleStatusEnum::PAID->name;
+                }
+                $sale->client->balance += $sale->total_price - $sale->getOriginal('total_price');
+                $sale->client->save();
+            }
+        }
+
+        if ($sale->isDirty('total_price')) {
+            $sale->total_price = $sale->total_price - ($sale->total_price * $sale->discount / 100);
+            if ($sale->getOriginal('total_price') > $sale->total_price) {
+                $sale->client->balance -= $sale->total_price - $sale->getOriginal('total_price');
+            } elseif ($sale->getOriginal('total_price') < $sale->total_price) {
+                $sale->client->balance += $sale->total_price - $sale->getOriginal('total_price');
+            }
+            $sale->client->save();
+        }
+
+        $sale->saveQuietly();
     }
 
     /**

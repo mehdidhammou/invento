@@ -7,9 +7,8 @@ use App\Models\Sale;
 use Filament\Tables;
 use App\Models\Product;
 use Filament\Resources\Form;
-use App\Enums\SaleStatusEnum;
 use Filament\Resources\Table;
-use App\Enums\OrderStatusEnum;
+use App\Enums\SaleStatusEnum;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Tables\Actions\Action;
@@ -49,14 +48,15 @@ class SaleResource extends Resource
                             Select::make('client_id')
                                 ->searchable()
                                 ->relationship('client', 'name')
+                                ->disabledOn('edit')
                                 ->preload()
                                 ->required(),
                             TextInput::make('total_price')
                                 ->required()
                                 ->numeric()
-                                ->disabledOn('create')
+                                ->disabled()
                                 ->default(0),
-                                TextInput::make('total_paid')
+                            TextInput::make('total_paid')
                                 ->disabledOn('create')
                                 ->numeric()
                                 ->placeholder('modifiable after creating the sale')
@@ -67,9 +67,9 @@ class SaleResource extends Resource
                                             return $get('total_price') - $get('total_price') * ($get('discount') / 100);
                                         }
                                     }
-                                    )
-                                    ->required()
-                                    ->default(0),
+                                )
+                                ->required()
+                                ->default(0),
                             TextInput::make('discount')
                                 ->default(0)
                                 ->required()
@@ -80,7 +80,9 @@ class SaleResource extends Resource
                                 ->default(now())
                                 ->required(),
                             Select::make('status')
-                                ->options(OrderStatusEnum::enumOptions())
+                                ->options(SaleStatusEnum::enumOptions())
+                                ->default(SaleStatusEnum::UNPAID->name)
+                                ->disabledOn('create')
                                 ->required(),
                         ])
                     ]),
@@ -95,12 +97,12 @@ class SaleResource extends Resource
                                     $query->where('total_quantity', '>', 0);
                                 })
                                 ->preload()
-                                ->label('Product')
                                 ->required()
                                 ->reactive()
                                 ->afterStateUpdated(function ($state, callable $set) {
                                     $product = Product::where('id', $state)->first();
-                                    $set('unit_price', $product->latest_price);
+                                    $set('unit_price', $product->latest_unit_price);
+                                    $set('sale_price', $product->latest_sale_price);
                                 }),
                             TextInput::make('quantity')
                                 ->required()
@@ -123,6 +125,7 @@ class SaleResource extends Resource
                                 ->minValue(0),
                             TextInput::make('sale_price')
                                 ->numeric()
+                                ->disabled()
                                 ->required()
                                 ->gte('unit_price')
                                 ->minValue(0),
@@ -143,6 +146,7 @@ class SaleResource extends Resource
                 Tables\Columns\TextColumn::make('total_paid')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('discount')
+                    ->formatStateUsing(fn (string $state): string => __("{$state}%"))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')
                     ->date()

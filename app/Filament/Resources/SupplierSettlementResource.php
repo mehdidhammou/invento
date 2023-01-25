@@ -30,18 +30,17 @@ class SupplierSettlementResource extends Resource
                 Forms\Components\Select::make('supplier_id')
                     ->relationship('supplier', 'name')
                     ->searchable()
+                    ->reactive()
                     ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('amount')
-                    ->default(0)
-                    ->disabled(fn (string $context) => $context === 'create')
                     ->numeric()
-                    ->maxValue(function (string $context, callable $get) {
-                        if ($context == 'create') {
-                            return 0;
-                        } else {
-                            return Supplier::find($get("supplier_id"))->balance;
+                    ->maxValue(function (callable $get) {
+                        if ($get('supplier_id')) {
+                            $supplier = Supplier::where('id', $get('supplier_id'))->first();
+                            return $supplier->balance;
                         }
+                        return 0;
                     })
                     ->required(),
                 Forms\Components\DatePicker::make('date')

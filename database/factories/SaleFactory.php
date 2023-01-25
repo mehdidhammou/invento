@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Client;
 use App\Models\Product;
 use App\Enums\OrderStatusEnum;
+use App\Enums\SaleStatusEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,7 +26,7 @@ class SaleFactory extends Factory
             'total_paid' => $this->faker->numberBetween(100000, 999999),
             'discount' => $this->faker->numberBetween(0, 50),
             'date' => $this->faker->date(),
-            'status' => $this->faker->randomElement(OrderStatusEnum::values()),
+            'status' => SaleStatusEnum::UNPAID->name,
         ];
     }
 }

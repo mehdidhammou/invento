@@ -12,7 +12,7 @@ class ClientSettlement extends Model
     protected $fillable = [
         'client_id',
         'amount',
-        'date',
+        'date',        
     ];
 
     public function client()

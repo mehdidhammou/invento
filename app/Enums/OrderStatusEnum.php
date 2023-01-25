@@ -5,9 +5,8 @@ namespace App\Enums;
 enum OrderStatusEnum
 {
     case PAID;
-    case SENT;
-    case UNPAID;
-    case DELIVERED;
+    case PENDING;
+    case RECEIVED;
 
     public static function values()
     {

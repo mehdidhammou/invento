@@ -50,7 +50,6 @@ class StockLevel extends Page implements Tables\Contracts\HasTable
     protected function getTableBulkActions(): array
     {
         return [
-            DeleteBulkAction::make(),
             BulkAction::make('Update Selection')
                 ->action(function (Collection $records) {
                     $this->products = $records;

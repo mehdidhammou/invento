@@ -30,9 +30,12 @@ class ClientSettlementResource extends Resource
             ->schema([
                 Forms\Components\Select::make('client_id')
                     ->relationship('client', 'name')
+                    ->searchable()
+                    ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('amount')
                     ->placeholder('0.00')
+                    ->numeric()
                     ->required(),
                 Forms\Components\DatePicker::make('date')
                     ->required()

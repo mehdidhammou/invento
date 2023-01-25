@@ -14,7 +14,8 @@ class SaleProductObserver
      */
     public function created(SaleProduct $saleProduct)
     {
-        //
+        $saleProduct->sale->total_price += $saleProduct->sale_price * $saleProduct->quantity;
+        $saleProduct->sale->save();
     }
 
     /**
@@ -25,7 +26,15 @@ class SaleProductObserver
      */
     public function updated(SaleProduct $saleProduct)
     {
- 
+        if ($saleProduct->isDirty('quantity')) {
+            $saleProduct->sale->total_price += ($saleProduct->sale_price * $saleProduct->quantity) - ($saleProduct->sale_price * $saleProduct->getOriginal('quantity'));
+            $saleProduct->sale->save();
+        }
+        
+        if($saleProduct->isDirty('sale_price')) {
+            $saleProduct->sale->total_price += ($saleProduct->sale_price * $saleProduct->quantity) - ($saleProduct->getOriginal('sale_price') * $saleProduct->quantity);
+            $saleProduct->sale->save();
+        }
     }
 
     /**

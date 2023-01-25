@@ -24,7 +24,7 @@ class OrderFactory extends Factory
             'total_paid' => $this->faker->numberBetween(100000, 999999),
             'discount' => $this->faker->numberBetween(0, 50),
             'date' => $this->faker->date(),
-            'status' => $this->faker->randomElement(OrderStatusEnum::values()),
+            'status' => OrderStatusEnum::PENDING->name,
         ];
     }
 }

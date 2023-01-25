@@ -5,9 +5,8 @@ namespace App\Enums;
 enum SaleStatusEnum
 {
     case PAID;
-    case SENT;
+    case DESTOCKED;
     case UNPAID;
-    case CANCELED;
 
     public static function values()
     {
