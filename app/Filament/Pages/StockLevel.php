@@ -40,10 +40,17 @@ class StockLevel extends Page implements Tables\Contracts\HasTable
     protected function getTableColumns(): array
     {
         return [
-            Tables\Columns\TextColumn::make('name'),
-            Tables\Columns\TextColumn::make('total_quantity'),
-            Tables\Columns\TextColumn::make('latest_unit_price')->money('DZD', true),
-            Tables\Columns\TextColumn::make('latest_sale_price')->money('DZD', true),
+            Tables\Columns\TextColumn::make('name')
+            ->searchable()
+            ->sortable(),
+            Tables\Columns\TextColumn::make('total_quantity')
+            ->sortable(),
+            Tables\Columns\TextColumn::make('latest_unit_price')
+            ->sortable()
+            ->money('DZD', true),
+            Tables\Columns\TextColumn::make('latest_sale_price')
+            ->money('DZD', true)
+            ->sortable(),
         ];
     }
 

@@ -10,7 +10,7 @@
                 </div>
 
                 <div class="text-3xl">
-                    {{ $this->products->sum(fn ($product) => $product->latest_unit_price * $product->total_quantity)}}
+                    {{ money($this->products->sum(fn ($product) => $product->latest_unit_price * $product->total_quantity), 'DZD', true)}}
                 </div>
 
             </div>
@@ -26,7 +26,7 @@
                 </div>
 
                 <div class="text-3xl">
-                    {{ $this->products->sum(fn ($product) => $product->latest_sale_price * $product->total_quantity) }}
+                    {{ money($this->products->sum(fn ($product) => $product->latest_sale_price * $product->total_quantity), 'DZD', true) }}
                 </div>
 
             </div>
@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="text-3xl">
-                    {{ $this->products->sum(fn ($product) => ($product->latest_sale_price - $product->latest_unit_price) * $product->total_quantity) }}
+                    {{ money($this->products->sum(fn ($product) => ($product->latest_sale_price - $product->latest_unit_price) * $product->total_quantity), 'DZD', true) }}
                 </div>
 
             </div>

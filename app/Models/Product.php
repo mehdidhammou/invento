@@ -44,7 +44,7 @@ class Product extends Model
     {
         return DB::table('order_product')
             ->join('orders', 'orders.id', '=', 'order_product.order_id')
-            ->where('orders.status', '!=', OrderStatusEnum::DELIVERED->name)
+            ->where('orders.status', '!=', OrderStatusEnum::PENDING->name)
             ->where('product_id', $this->id)
             ->orderBy('orders.date', 'desc')
             ->first()
@@ -54,7 +54,7 @@ class Product extends Model
     {
         return DB::table('order_product')
             ->join('orders', 'orders.id', '=', 'order_product.order_id')
-            ->where('orders.status', '!=', OrderStatusEnum::DELIVERED->name)
+            ->where('orders.status', '!=', OrderStatusEnum::PENDING->name)
             ->where('product_id', $this->id)
             ->orderBy('orders.date', 'desc')
             ->first()
@@ -70,7 +70,7 @@ class Product extends Model
     {
         return DB::table('order_product')
             ->join('orders', 'orders.id', '=', 'order_product.order_id')
-            ->where('orders.status', '!=', OrderStatusEnum::DELIVERED->name)
+            ->where('orders.status', '!=', OrderStatusEnum::PENDING->name)
             ->where('order_product.product_id', $this->id)
             ->orderBy('orders.date', 'desc')
             ->first()
