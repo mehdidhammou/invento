@@ -50,9 +50,11 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('latest_order'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
+                    ->sortable()
                     ->since(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
+                    ->sortable()
                     ->since(),
             ])
             ->filters([
@@ -70,9 +72,7 @@ class ProductResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            
-        ];
+        return [];
     }
 
     public static function getPages(): array

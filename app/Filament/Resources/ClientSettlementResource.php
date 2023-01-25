@@ -35,7 +35,8 @@ class ClientSettlementResource extends Resource
                     ->placeholder('0.00')
                     ->required(),
                 Forms\Components\DatePicker::make('date')
-                    ->required(),
+                    ->required()
+                    ->default(now()),
             ]);
     }
 
@@ -43,14 +44,23 @@ class ClientSettlementResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('client.name'),
-                Tables\Columns\TextColumn::make('amount')->money('DZD', true),
+                Tables\Columns\TextColumn::make('client.name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('amount')
+                    ->money('DZD', true)
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('date')
-                    ->date(),
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->sortable()
+                    ->since(),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->sortable()
+                    ->since(),
             ])
             ->filters([
                 //

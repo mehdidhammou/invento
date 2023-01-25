@@ -136,7 +136,8 @@ class SaleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('client.name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('total_price')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_paid')
