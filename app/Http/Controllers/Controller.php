@@ -30,7 +30,7 @@ class Controller extends BaseController
 
     public function showOrder($id)
     {
-        $order = Order::where('id', 11)
+        $order = Order::where('id', $id)
             ->with(
                 [
                     'orderProducts' => fn ($query) => $query->with('product'),
