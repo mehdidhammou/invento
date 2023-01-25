@@ -6,7 +6,8 @@
 
 ## Description:
 
-Ce projet consiste en une application Web de gestion et de reporting de stock qui offre une grande quantité de données synthétisées sous forme de tableaux et de graphiques pour améliorer la gestion commerciale. L'application doit être fiable et offrir une réponse rapide aux besoins de l'utilisateur. Elle comprend des fonctionnalités telles que la gestion de clients, fournisseurs, produits, achats, ventes, stocks, factures, crédits, paiements, etc.
+Invento est une application Web de gestion et de reporting de stock qui offre des formes et de tableaux et de graphiques pour améliorer la gestion commerciale. 
+Avec des règles de contraintes très	 fortes, L'application doit être fiable et offrir une réponse rapide aux besoins de l'utilisateur. Elle comprend des fonctionnalités telles que la gestion de clients, fournisseurs, produits, achats, ventes, stocks, factures, crédits, paiements, etc.
 
 ## Configuration:
 
