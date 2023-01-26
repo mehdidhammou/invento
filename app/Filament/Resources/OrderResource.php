@@ -29,6 +29,7 @@ use App\Filament\Resources\OrderResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use Filament\Forms\Components\Actions\Modal\Actions\Action;
+use Filament\Forms\Components\Hidden;
 
 class OrderResource extends Resource
 {
@@ -59,15 +60,8 @@ class OrderResource extends Resource
                             TextInput::make('total_paid')
                                 ->disabledOn('create')
                                 ->numeric()
-                                ->lte('total_price')
-                                ->maxValue(
-                                    function (callable $get) {
-                                        if ($get('total_price') && $get('discount')) {
-                                            return $get('total_price') - $get('total_price') * ($get('discount') / 100);
-                                        }
-                                    }
-                                )
                                 ->required()
+                                ->lte('total_price')
                                 ->default(0),
                             TextInput::make('discount')
                                 ->default(0)
@@ -102,12 +96,14 @@ class OrderResource extends Resource
                             TextInput::make('unit_price')
                                 ->numeric()
                                 ->required()
+                                ->default(0)
                                 ->disabledOn('create')
                                 ->minValue(0),
                             TextInput::make('sale_price')
                                 ->numeric()
                                 ->disabledOn('create')
                                 ->required()
+                                ->default(0)
                                 ->gte('unit_price')
                                 ->minValue(0),
                         ])

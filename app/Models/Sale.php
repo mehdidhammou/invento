@@ -23,13 +23,13 @@ class Sale extends Model
     ];
 
 
-    // public function products()
-    // {
-    //     return $this->belongsToMany(Product::class)
-    //         ->using(SaleProduct::class)
-    //         ->withPivot('quantity', 'unit_price', 'sale_price')
-    //         ->withTimestamps();
-    // }
+    public function products()
+    {
+        return $this->belongsToMany(Product::class)
+            ->using(SaleProduct::class)
+            ->withPivot('quantity', 'unit_price', 'sale_price')
+            ->withTimestamps();
+    }
 
     public function saleProducts()
     {

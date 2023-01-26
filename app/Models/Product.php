@@ -27,13 +27,13 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    // public function orders()
-    // {
-    //     return $this->belongsToMany(Order::class)
-    //         ->using(OrderProduct::class)
-    //         ->withPivot('quantity', 'unit_price', 'sale_price')
-    //         ->withTimestamps();
-    // }
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class)
+            ->using(OrderProduct::class)
+            ->withPivot('quantity', 'unit_price', 'sale_price')
+            ->withTimestamps();
+    }
 
     public function orderProducts()
     {
@@ -78,11 +78,11 @@ class Product extends Model
     }
 
 
-    // public function sales()
-    // {
-    //     return $this->belongsToMany(Sale::class)
-    //         ->using(SaleProduct::class)
-    //         ->withPivot('quantity', 'unit_price', 'sale_price')
-    //         ->withTimestamps();
-    // }
+    public function sales()
+    {
+        return $this->belongsToMany(Sale::class)
+            ->using(SaleProduct::class)
+            ->withPivot('quantity', 'unit_price', 'sale_price')
+            ->withTimestamps();
+    }
 }

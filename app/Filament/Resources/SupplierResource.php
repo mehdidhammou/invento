@@ -41,6 +41,12 @@ class SupplierResource extends Resource
                     ->unique()
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('balance')
+                    ->required()
+                    ->numeric()
+                    ->default(0)
+                    ->maxLength(255)
+                    ->disabled(),
             ]);
     }
 

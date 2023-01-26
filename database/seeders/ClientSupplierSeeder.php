@@ -16,6 +16,9 @@ class ClientSupplierSeeder extends Seeder
      */
     public function run()
     {
+        if(Client::count() || Supplier::count()){
+            return;
+        }
         Client::factory()->count(10)->create();
         Supplier::factory()->count(10)->create();
     }

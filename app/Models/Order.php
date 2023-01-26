@@ -23,13 +23,13 @@ class Order extends Model
         return $this->belongsTo(Supplier::class);
     }
 
-    // public function products()
-    // {
-    //     return $this->belongsToMany(Product::class)
-    //         ->using(OrderProduct::class)
-    //         ->withPivot('quantity', 'unit_price', 'sale_price')
-    //         ->withTimestamps();
-    // }
+    public function products()
+    {
+        return $this->belongsToMany(Product::class)
+            ->using(OrderProduct::class)
+            ->withPivot('quantity', 'unit_price', 'sale_price')
+            ->withTimestamps();
+    }
 
     public function orderProducts()
     {

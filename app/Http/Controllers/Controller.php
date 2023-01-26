@@ -23,9 +23,7 @@ class Controller extends BaseController
 
     public function query()
     {
-
-        $minYear =  Sale::min('date')->date_format('Y');
-        return $minYear;
+        return Product::inRandomOrder()->first()->id;
     }
 
     public function showOrder($id)

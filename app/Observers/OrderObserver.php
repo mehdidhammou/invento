@@ -4,6 +4,8 @@ namespace App\Observers;
 
 use App\Enums\OrderStatusEnum;
 use App\Models\Order;
+use App\Services\OrderService;
+use Filament\Notifications\Notification;
 
 class OrderObserver
 {
@@ -15,7 +17,7 @@ class OrderObserver
      */
     public function created(Order $order)
     {
-        //
+        OrderService::updateConnectedAttributes($order);
     }
 
     /**
@@ -26,23 +28,7 @@ class OrderObserver
      */
     public function updated(Order $order)
     {
-        if ($order->isDirty('status')) {
-            if ($order->getOriginal('status') == OrderStatusEnum::PENDING->name && in_array($order->status, [OrderStatusEnum::PAID->name, OrderStatusEnum::RECEIVED->name])) {
-                foreach ($order->orderProducts()->with('product')->get() as $orderProduct) {
-                    $orderProduct->product->total_quantity += $orderProduct->quantity;
-                    $orderProduct->product->save();
-                }
-            }
-
-            if ($order->isDirty('discount')) {
-                $total = 0;
-                foreach ($order->saleProducts as $saleProduct) {
-                    $total += $saleProduct->sale_price * $saleProduct->quantity;
-                }
-                $order->total_price = $total - ($total * $order->discount / 100);
-            }
-        }
-        $order->saveQuietly();
+        OrderService::updateConnectedAttributes($order);
     }
 
     /**

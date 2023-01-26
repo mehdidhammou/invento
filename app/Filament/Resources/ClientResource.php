@@ -40,6 +40,9 @@ class ClientResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('balance')
+                    ->disabled()
+                    ->numeric()
+                    ->default(0)
                     ->required(),
             ]);
     }

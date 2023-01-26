@@ -26,13 +26,10 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             // orders
             OrderSeeder::class,
-            OrderProductSeeder::class,
             // documents
             BLSeeder::class,
             InvoiceSeeder::class,
             // sales
-            SaleSeeder::class,
-            SaleProductSeeder::class,
         ]);
     }
 }

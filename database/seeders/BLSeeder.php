@@ -15,6 +15,8 @@ class BLSeeder extends Seeder
      */
     public function run()
     {
+        if(BL::count())
+            return;
         BL::factory(10)->create();
     }
 }
