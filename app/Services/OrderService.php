@@ -13,14 +13,12 @@ class OrderService
 
     public static function updateConnectedAttributes(Order $order)
     {
-        // update total price without discount
+        // update total price
         $new_total_price = 0;
         foreach ($order->orderProducts as $orderProduct) {
             $new_total_price += $orderProduct->unit_price * $orderProduct->quantity;
         }
         $order->total_price = $new_total_price;
-        // apply discount to total price
-        $order->total_price -=$order->total_price * $order->discount / 100;
         $old_amount_owed = $order->getOriginal('total_price') - $order->getOriginal('total_paid');
         $new_amount_owed = $order->total_price - $order->total_paid;
         $order->supplier->balance += $old_amount_owed - $new_amount_owed;

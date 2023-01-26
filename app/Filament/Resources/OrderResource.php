@@ -63,12 +63,6 @@ class OrderResource extends Resource
                                 ->required()
                                 ->lte('total_price')
                                 ->default(0),
-                            TextInput::make('discount')
-                                ->default(0)
-                                ->required()
-                                ->minValue(0)
-                                ->maxValue(100)
-                                ->numeric(),
                             DatePicker::make('date')
                                 ->default(now())
                                 ->required(),
@@ -122,8 +116,6 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('total_price')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_paid')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('discount')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')
                     ->sortable(),

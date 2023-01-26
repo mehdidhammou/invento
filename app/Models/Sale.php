@@ -13,7 +13,6 @@ class Sale extends Model
         'client_id',
         'total_price',
         'total_paid',
-        'discount',
         'date',
         'status',
     ];
@@ -39,5 +38,10 @@ class Sale extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function settlements()
+    {
+        return $this->hasMany(ClientSettlement::class);
     }
 }

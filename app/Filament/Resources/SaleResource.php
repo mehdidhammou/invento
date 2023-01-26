@@ -61,21 +61,8 @@ class SaleResource extends Resource
                                 ->numeric()
                                 ->placeholder('modifiable after creating the sale')
                                 ->lte('total_price')
-                                ->maxValue(
-                                    function (callable $get) {
-                                        if ($get('total_price') && $get('discount')) {
-                                            return $get('total_price') - $get('total_price') * ($get('discount') / 100);
-                                        }
-                                    }
-                                )
                                 ->required()
                                 ->default(0),
-                            TextInput::make('discount')
-                                ->default(0)
-                                ->required()
-                                ->minValue(0)
-                                ->maxValue(100)
-                                ->numeric(),
                             DatePicker::make('date')
                                 ->default(now())
                                 ->required(),
@@ -144,9 +131,6 @@ class SaleResource extends Resource
                 Tables\Columns\TextColumn::make('total_price')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_paid')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('discount')
-                    ->formatStateUsing(fn (string $state): string => __("{$state}%"))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')
                     ->date()

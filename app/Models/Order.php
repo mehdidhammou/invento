@@ -13,7 +13,6 @@ class Order extends Model
         'supplier_id',
         'total_price',
         'total_paid',
-        'discount',
         'date',
         'status',
     ];
@@ -45,4 +44,10 @@ class Order extends Model
     {
         return $this->hasMany(BL::class);
     }
+
+    public function settlements()
+    {
+        return $this->hasMany(SupplierSettlement::class);
+    }
+
 }

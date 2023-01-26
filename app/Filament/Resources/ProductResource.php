@@ -43,12 +43,22 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('category.name'),
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('total_quantity'),
-                Tables\Columns\TextColumn::make('latest_unit_price')->money('DZD', true),
-                Tables\Columns\TextColumn::make('latest_sale_price')->money('DZD', true),
-                Tables\Columns\TextColumn::make('latest_order'),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('total_quantity')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('latest_unit_price')
+                    ->money('DZD', true)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('latest_sale_price')->money('DZD', true)
+                    ->money('DZD', true)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('latest_order')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -67,8 +77,7 @@ class ProductResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ])
-            ->headerActions([
-            ]);
+            ->headerActions([]);
     }
 
     public static function getRelations(): array
@@ -88,7 +97,7 @@ class ProductResource extends Resource
     public static function getWidgets(): array
     {
         return [
-            StockValue::class,  
+            StockValue::class,
         ];
     }
 }

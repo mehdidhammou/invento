@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('client_settlements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('sale_id')->nullable()->constrained()->nullOnDelete();
             $table->decimal('amount', 12, 2)->default(0.00);
             $table->date('date');
             $table->timestamps();

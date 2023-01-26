@@ -22,7 +22,6 @@ class Client extends Model
 
     public function settlements()
     {
-        return $this->hasMany(ClientSettlement::class);
+        return $this->hasManyThrough(ClientSettlement::class, Sale::class);
     }
-
 }

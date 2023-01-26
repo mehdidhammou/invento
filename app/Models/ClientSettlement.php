@@ -12,11 +12,12 @@ class ClientSettlement extends Model
     protected $fillable = [
         'client_id',
         'amount',
-        'date',        
+        'date',
+        'sale_id',        
     ];
 
-    public function client()
+    public function sale()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Sale::class);
     }
 }

@@ -25,7 +25,7 @@ class Supplier extends Model
 
     public function settlements()
     {
-        return $this->hasMany(SupplierSettlement::class);
+        return $this->hasManyThrough(SupplierSettlement::class, Order::class);
     }
 
 }

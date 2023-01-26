@@ -13,10 +13,11 @@ class SupplierSettlement extends Model
         'supplier_id',
         'amount',
         'date',
+        'order_id',
     ];
 
-    public function supplier()
+    public function order()
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(Order::class);
     }
 }
