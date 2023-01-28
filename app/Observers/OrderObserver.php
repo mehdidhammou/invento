@@ -28,9 +28,25 @@ class OrderObserver
      */
     public function updated(Order $order)
     {
-        if($order->isDirty('total_paid'))
-        if($order->isDirty('status') && in_array($order->status, [OrderStatusEnum::RECEIVED->name, OrderStatusEnum::PAID->name])) {
-            OrderService::addProductsToStock($order);
+        if ($order->isDirty('delivered')) {
+            if ($order->delivered) {
+                Orderservice::resetTotalPrice($order);
+                OrderService::addProductsToStock($order);
+                OrderService::addBalanceToSupplier($order);
+            }
+        }
+
+        if ($order->isDirty('total_paid')) {
+            if ($order->total_paid == $order->total_price) {
+                $order->status = OrderStatusEnum::PAID->name;
+                Notification::make()
+                    ->success()
+                    ->title('Congrats!, Order has been fully paid')
+                    ->send();
+            } else {
+                $order->status = OrderStatusEnum::UNPAID->name;
+            }
+            $order->saveQuietly();
         }
     }
 

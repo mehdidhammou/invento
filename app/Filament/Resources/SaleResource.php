@@ -7,20 +7,27 @@ use App\Models\Sale;
 use Filament\Tables;
 use App\Models\Product;
 use Filament\Resources\Form;
-use Filament\Resources\Table;
 use App\Enums\SaleStatusEnum;
-use App\Filament\Resources\SaleResource\RelationManagers\SettlementsRelationManager;
+use Filament\Resources\Table;
+use App\Enums\OrderStatusEnum;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SaleResource\Pages;
+use App\Filament\Resources\SaleResource\RelationManagers\ClientRelationManager;
+use App\Filament\Resources\SaleResource\RelationManagers\SettlementsRelationManager;
 use App\Filament\Resources\SaleResource\RelationManagers\SaleProductsRelationManager;
 
 class SaleResource extends Resource
@@ -36,15 +43,37 @@ class SaleResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Sale Details')
-                    ->schema([
-                        Grid::make(2)->schema([
+                Grid::make(3)->schema([
+                    Section::make('Sale Details')
+                        ->columnSpan(2)
+                        ->schema([
                             Select::make('client_id')
                                 ->searchable()
                                 ->relationship('client', 'name')
                                 ->disabledOn('edit')
                                 ->preload()
                                 ->required(),
+                            DatePicker::make('date')
+                                ->default(now())
+                                ->required(),
+                            Toggle::make('purchased')
+                                ->inline(false)
+                                ->required()
+                                ->disabled(
+                                    function (string $context, $record) {
+                                        if ($context == 'create') {
+                                            return true;
+                                        }
+                                        return $record->purchased;
+                                    }
+                                )
+                                ->hint('toggling this will remove products from the inventory and disable any further changes!')
+                                ->hintColor('warning'),
+                        ]),
+                    Section::make('Payment Details')
+                        ->disabled()
+                        ->columnSpan(1)
+                        ->schema([
                             TextInput::make('total_price')
                                 ->required()
                                 ->numeric()
@@ -57,22 +86,24 @@ class SaleResource extends Resource
                                 ->lte('total_price')
                                 ->required()
                                 ->default(0),
-                            DatePicker::make('date')
-                                ->default(now())
-                                ->required(),
                             Select::make('status')
                                 ->options(SaleStatusEnum::enumOptions())
                                 ->default(SaleStatusEnum::UNPAID->name)
-                                ->disabledOn('create')
-                                ->required(),
                         ])
-                    ]),
-
-                Repeater::make('saleProducts')
-                    ->relationship()
-                    ->columnSpanFull()
-                    ->schema([
-                        Grid::make(4)->schema([
+                ]),
+                Section::make('Products')->schema([
+                    Repeater::make('saleProducts')
+                        ->relationship()
+                        ->createItemButtonLabel('Add Products')
+                        ->columns(4)
+                        ->label(false)
+                        ->disabled(function (string $context, $record) {
+                            if ($context == 'create') {
+                                return false;
+                            }
+                            return $record->purchased;
+                        })
+                        ->schema([
                             Select::make('product_id')
                                 ->relationship('product', 'name', function (Builder $query) {
                                     $query->where('total_quantity', '>', 0);
@@ -110,8 +141,8 @@ class SaleResource extends Resource
                                 ->required()
                                 ->gte('unit_price')
                                 ->minValue(0),
-                        ])
-                    ])
+                        ]),
+                ])
             ]);
     }
 
@@ -119,31 +150,43 @@ class SaleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('client.name')
+                TextColumn::make('client.name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('total_price')
+                TextColumn::make('sale_products_count')
+                    ->counts('saleProducts')
+                    ->label('# Products')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('total_paid')
+                TextColumn::make('total_price')
+                    ->money('DZD', true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('date')
-                    ->date()
+                TextColumn::make('total_paid')
+                    ->money('DZD', true)
                     ->sortable(),
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors(SaleStatusEnum::enumColors())
+                TextColumn::make('date')
+                    ->sortable(),
+                IconColumn::make('purchased')
+                    ->options(['heroicon-o-check-circle' => 1, 'heroicon-o-x-circle' => 0])
+                    ->colors(['success' => 1, 'warning' => 0]),
+                BadgeColumn::make('status')
+                    ->colors(OrderStatusEnum::enumColors())
                     ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->multiple()
                     ->options(SaleStatusEnum::enumOptions())
+                    ->label('Payment Status')
                     ->placeholder('All Statuses'),
+                Filter::make('purchased')
+                    ->label('Sale Status')
+                    ->query(fn (Builder $query) => $query->where('purchased', 1))
+                    ->toggle()
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Action::make('export')
+                Action::make('Export')
                     ->icon('heroicon-o-download')
                     ->url(fn ($record) => route('export.sale', $record->id)),
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -153,8 +196,8 @@ class SaleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            SaleProductsRelationManager::class,
             SettlementsRelationManager::class,
+            ClientRelationManager::class,
         ];
     }
 

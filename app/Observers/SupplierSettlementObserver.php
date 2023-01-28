@@ -14,9 +14,11 @@ class SupplierSettlementObserver
      */
     public function created(SupplierSettlement $supplierSettlement)
     {
-        $supplierSettlement->supplier->update([
-            'balance' => $supplierSettlement->supplier->balance - $supplierSettlement->amount,
-        ]);
+        $supplierSettlement->supplier->balance -= $supplierSettlement->amount;
+        $supplierSettlement->supplier->save();
+
+        $supplierSettlement->order->total_paid += $supplierSettlement->amount;
+        $supplierSettlement->order->save();
     }
 
     /**
@@ -27,12 +29,7 @@ class SupplierSettlementObserver
      */
     public function updated(SupplierSettlement $supplierSettlement)
     {
-        if ($supplierSettlement->isDirty('amount')) {
-            $supplier = $supplierSettlement->supplier;
-            $supplier->balance += $supplierSettlement->getOriginal('amount');
-            $supplier->balance -= $supplierSettlement->amount;
-            $supplier->save();
-        }
+        
     }
 
     /**
@@ -45,6 +42,11 @@ class SupplierSettlementObserver
     {
         $supplier = $supplierSettlement->supplier;
         $supplier->balance += $supplierSettlement->amount;
+
+        $order = $supplierSettlement->order;
+        $order->total_paid -= $supplierSettlement->amount;
+
+        $order->save();
         $supplier->save();
     }
 

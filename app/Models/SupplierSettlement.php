@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class SupplierSettlement extends Model
 {
     use HasFactory;
+    use \Znck\Eloquent\Traits\BelongsToThrough;
 
     protected $fillable = [
-        'supplier_id',
         'amount',
         'date',
         'order_id',
@@ -19,5 +19,9 @@ class SupplierSettlement extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function supplier(){
+        return $this->belongsToThrough(Supplier::class, Order::class);
     }
 }

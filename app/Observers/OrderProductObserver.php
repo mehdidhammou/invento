@@ -16,7 +16,7 @@ class OrderProductObserver
      */
     public function created(OrderProduct $orderProduct)
     {
-        $orderProduct->order->total_price += $orderProduct->unit_price * $orderProduct->quantity;
+        OrderService::resetTotalPrice($orderProduct->order);
     }
 
     /**
@@ -27,11 +27,11 @@ class OrderProductObserver
      */
     public function updated(OrderProduct $orderProduct)
     {
-        if($orderProduct->isDirty('quantity') || $orderProduct->isDirty('unit_price')) {
+        if ($orderProduct->isDirty('quantity') || $orderProduct->isDirty('unit_price')) {
             OrderService::resetTotalPrice($orderProduct->order);
         }
     }
-    
+
     /**
      * Handle the OrderProduct "deleted" event.
      *

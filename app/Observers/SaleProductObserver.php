@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\SaleProduct;
+use App\Services\SaleService;
 
 class SaleProductObserver
 {
@@ -14,8 +15,7 @@ class SaleProductObserver
      */
     public function created(SaleProduct $saleProduct)
     {
-        $saleProduct->sale->total_price += $saleProduct->sale_price * $saleProduct->quantity;
-        $saleProduct->sale->save();
+        SaleService::resetTotalPrice($saleProduct->sale);
     }
 
     /**
@@ -27,8 +27,7 @@ class SaleProductObserver
     public function updated(SaleProduct $saleProduct)
     {
         if ($saleProduct->isDirty('quantity') || $saleProduct->isDirty('sale_price')) {
-            $saleProduct->sale->total_price += ($saleProduct->sale_price * $saleProduct->quantity) - ($saleProduct->getOriginal('sale_price') * $saleProduct->getOriginal('quantity'));
-            $saleProduct->sale->save();
+            SaleService::resetTotalPrice($saleProduct->sale);
         }
     }
 
@@ -40,7 +39,7 @@ class SaleProductObserver
      */
     public function deleted(SaleProduct $saleProduct)
     {
-        //
+        SaleService::resetTotalPrice($saleProduct->sale);
     }
 
     /**

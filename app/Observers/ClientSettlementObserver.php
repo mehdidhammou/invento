@@ -29,12 +29,6 @@ class ClientSettlementObserver
      */
     public function updated(ClientSettlement $clientSettlement)
     {
-        if ($clientSettlement->isDirty('amount')) {
-            $client = $clientSettlement->client;
-            $client->balance += $clientSettlement->getOriginal('amount');
-            $client->balance -= $clientSettlement->amount;
-            $client->save();
-        }
     }
 
     /**
@@ -47,6 +41,12 @@ class ClientSettlementObserver
     {
         $client = $clientSettlement->client;
         $client->balance += $clientSettlement->amount;
+
+        $sale = $clientSettlement->sale;
+        $sale->total_paid -= $clientSettlement->amount;
+
+        $sale->save();
+
         $client->save();
     }
 

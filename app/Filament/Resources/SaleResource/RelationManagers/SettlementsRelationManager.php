@@ -25,7 +25,7 @@ class SettlementsRelationManager extends RelationManager
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->total_paid;
+                        return $livewire->ownerRecord->total_price - $livewire->ownerRecord->total_paid;
                     })
                     ->required(),
                 DatePicker::make('date')
@@ -38,18 +38,16 @@ class SettlementsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('amount'),
+                Tables\Columns\TextColumn::make('amount')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('date')
-                    ->date(),
-            ])
-            ->filters([
-                //
+                    ->date()
+                    ->sortable(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

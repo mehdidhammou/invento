@@ -7,20 +7,30 @@ use App\Models\Order;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use App\Enums\OrderStatusEnum;
-use App\Filament\Resources\OrderResource\RelationManagers\SettlementsRelationManager;
+use App\Filament\Resources\OrderResource\RelationManagers\ProductsRelationManager;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Filters\SelectFilter;
-use App\Filament\Resources\OrderResource\Pages;
-use Filament\Forms\Components\Toggle;
-use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\DeleteBulkAction;
+use App\Filament\Resources\OrderResource\Pages;
+use App\Filament\Resources\OrderResource\Pages\EditOrder;
+use App\Filament\Resources\OrderResource\Pages\ListOrders;
+use App\Filament\Resources\OrderResource\Pages\CreateOrder;
+use App\Filament\Resources\OrderResource\RelationManagers\SupplierRelationManager;
+use App\Filament\Resources\OrderResource\RelationManagers\SettlementsRelationManager;
 
 class OrderResource extends Resource
 {
@@ -35,62 +45,85 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Sale Details')
-                    ->schema([
-                        Grid::make(2)->schema([
+                Grid::make(3)->schema([
+                    Section::make('Order Details')
+                        ->columnSpan(2)
+                        ->schema([
                             Select::make('supplier_id')
                                 ->searchable()
+                                ->disabled(fn (string $context) => $context == 'edit')
                                 ->relationship('supplier', 'name')
                                 ->preload()
                                 ->required(),
                             DatePicker::make('date')
                                 ->default(now())
                                 ->required(),
+                            Toggle::make('delivered')
+                                ->inline(false)
+                                ->required()
+                                ->disabled(
+                                    function (string $context, $record) {
+                                        if ($context == 'create') {
+                                            return true;
+                                        }
+                                        return $record->delivered;
+                                    }
+                                )
+                                ->hint('toggling this will add products to the inventory and disable any further changes!')
+                                ->hintColor('warning'),
+                        ]),
+                    Section::make('Payment Status')
+                        ->disabled()
+                        ->columnSpan(1)
+                        ->schema([
                             TextInput::make('total_price')
                                 ->numeric()
-                                ->disabled()
                                 ->default(0),
                             TextInput::make('total_paid')
-                                ->disabled()
                                 ->numeric()
                                 ->default(0),
                             Select::make('status')
                                 ->options(OrderStatusEnum::enumOptions())
-                                ->default(OrderStatusEnum::UNPAID->name)
-                                ->disabled(),
-                            Toggle::make('delivered')
-                                ->required()
-                                ->disabledOn('create'),
+                                ->default(OrderStatusEnum::UNPAID->name),
                         ])
-                    ]),
+                ]),
 
-                Repeater::make('orderProducts')
-                    ->relationship()
-                    ->columnSpanFull()
+                Section::make('Products')
                     ->schema([
-                        Grid::make(4)->schema([
-                            Select::make('product_id')
-                                ->relationship('product', 'name')
-                                ->preload()
-                                ->required(),
-                            TextInput::make('quantity')
-                                ->required()
-                                ->numeric()
-                                ->minValue(0),
-                            TextInput::make('unit_price')
-                                ->numeric()
-                                ->required()
-                                ->default(0)
-                                ->disabledOn('create')
-                                ->minValue(0),
-                            TextInput::make('sale_price')
-                                ->numeric()
-                                ->disabledOn('create')
-                                ->required()
-                                ->default(0)
-                                ->gte('unit_price')
-                                ->minValue(0),
-                        ])
+                        Repeater::make('orderProducts')
+                            ->label(false)
+                            ->columns(4)
+                            ->relationship()
+                            ->createItemButtonLabel('Add Products')
+                            ->disabled(function (string $context, $record) {
+                                if ($context == 'create') {
+                                    return false;
+                                }
+                                return $record->delivered;
+                            })
+                            ->schema([
+                                Select::make('product_id')
+                                    ->relationship('product', 'name')
+                                    ->preload()
+                                    ->required(),
+                                TextInput::make('quantity')
+                                    ->required()
+                                    ->numeric()
+                                    ->minValue(0),
+                                TextInput::make('unit_price')
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->disabledOn('create')
+                                    ->minValue(0),
+                                TextInput::make('sale_price')
+                                    ->numeric()
+                                    ->disabledOn('create')
+                                    ->required()
+                                    ->default(0)
+                                    ->gte('unit_price')
+                                    ->minValue(0),
+                            ])
                     ])
             ]);
     }
@@ -99,7 +132,7 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('supplier.name')
+                TextColumn::make('supplier.name')
                     ->sortable()
                     ->searchable()
                     ->label('Supplier'),
@@ -107,40 +140,39 @@ class OrderResource extends Resource
                     ->counts('orderProducts')
                     ->label('# Products')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('total_price')
+                TextColumn::make('total_price')
+                    ->money('DZD', true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('total_paid')
+                TextColumn::make('total_paid')
+                    ->money('DZD', true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('date')
+                TextColumn::make('date')
                     ->sortable(),
                 IconColumn::make('delivered')
-                    ->options([
-                        'heroicon-o-check-circle' => 1,
-                        'heroicon-o-x-circle' => 0,
-                    ])
-                    ->colors([
-                        'success' => 1,
-                        'warning' => 0,
-                    ]),
-                Tables\Columns\BadgeColumn::make('status')
+                    ->options(['heroicon-o-check-circle' => 1, 'heroicon-o-x-circle' => 0])
+                    ->colors(['success' => 1, 'warning' => 0]),
+                BadgeColumn::make('status')
                     ->colors(OrderStatusEnum::enumColors())
                     ->sortable(),
-
-
             ])
             ->filters([
                 SelectFilter::make('status')
                     ->options(OrderStatusEnum::enumOptions())
+                    ->label('Payment Status')
                     ->placeholder('All Statuses'),
+                Filter::make('delivered')
+                    ->label('Delivery Status')
+                    ->query(fn (Builder $query) => $query->where('delivered', 1))
+                    ->toggle()
             ])
             ->actions([
-                Tables\Actions\Action::make('Export')
+                Action::make('Export')
                     ->icon('heroicon-o-download')
                     ->url(fn ($record) => route('export.order', $record->id)),
-                Tables\Actions\EditAction::make()
+                EditAction::make()
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -148,6 +180,7 @@ class OrderResource extends Resource
     {
         return [
             SettlementsRelationManager::class,
+            SupplierRelationManager::class,
         ];
     }
 

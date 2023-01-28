@@ -40,13 +40,15 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production')) {
             \URL::forceScheme('https');
         }
-
+        // client side
         Client::observe(ClientObserver::class);
         ClientSettlement::observe(ClientSettlementObserver::class);
-        SupplierSettlement::observe(SupplierSettlementObserver::class);
         Sale::observe(SaleObserver::class);
-        Order::observe(OrderObserver::class);
         SaleProduct::observe(SaleProductObserver::class);
+
+        // supplier side
+        SupplierSettlement::observe(SupplierSettlementObserver::class);
+        Order::observe(OrderObserver::class);
         OrderProduct::observe(OrderProductObserver::class);
     }
 }

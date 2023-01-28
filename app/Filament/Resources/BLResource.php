@@ -2,17 +2,20 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\BLResource\Pages;
-use App\Filament\Resources\BLResource\RelationManagers;
-use App\Filament\Resources\BLResource\RelationManagers\OrderRelationManager;
 use App\Models\BL;
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
+use App\Models\Order;
+use App\Models\Supplier;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\BLResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\BLResource\RelationManagers;
+use App\Filament\Resources\BLResource\RelationManagers\OrderRelationManager;
 
 class BLResource extends Resource
 {
@@ -28,12 +31,28 @@ class BLResource extends Resource
     {
         return $form
             ->schema([
+                Select::make('supplier_id')
+                    ->options(Supplier::pluck('name', 'id'))
+                    ->reactive()
+                    ->searchable()
+                    ->preload()
+                    ->required()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        $set('order_id', null);
+                    }),
                 Forms\Components\Select::make('order_id')
-                    ->relationship('order', 'id'),
+                    ->options(function (callable $get) {
+                        if ($get('supplier_id')) {
+                            return Order::where('supplier_id', $get('supplier_id')->where('delivered', 1))
+                                ->pluck('date', 'id');
+                        }
+                    })
+                    ->required(),
                 Forms\Components\TextInput::make('number')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('date')
+                    ->default(now())
                     ->required(),
             ]);
     }
@@ -43,25 +62,23 @@ class BLResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('order.supplier.name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('order.date')
                     ->sortable()
-                    ->searchable(),
+                    ->label('Order Date'),
                 Tables\Columns\TextColumn::make('number')
                     ->sortable()
                     ->searchable(),
-                    Tables\Columns\TextColumn::make('date')
-                    ->date()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('date')
+                    ->sortable()
+                    ->date(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
-                    ->since()
-                    ->sortable(),
+                    ->since(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
-                    ->since()
-                    ->sortable(),
-            ])
-            ->filters([
-                // 
+                    ->since(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

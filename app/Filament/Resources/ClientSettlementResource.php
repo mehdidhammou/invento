@@ -2,18 +2,29 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Forms;
+use App\Models\Sale;
+use Filament\Tables;
+use App\Models\Order;
+use Filament\Resources\Form;
+use App\Enums\SaleStatusEnum;
+use Filament\Resources\Table;
 use App\Enums\OrderStatusEnum;
+use App\Models\ClientSettlement;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ClientSettlementResource\Pages;
 use App\Filament\Resources\ClientSettlementResource\RelationManagers;
-use App\Models\ClientSettlement;
-use Filament\Forms;
-use Filament\Forms\Components\Select;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
-use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ClientSettlementResource\Pages\ManageClientSettlements;
 
 class ClientSettlementResource extends Resource
 {
@@ -24,56 +35,53 @@ class ClientSettlementResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-check';
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('client_id')
-                    ->relationship('client', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-                Forms\Components\TextInput::make('amount')
-                    ->placeholder('0.00')
-                    ->numeric()
-                    ->required(),
-                Forms\Components\DatePicker::make('date')
-                    ->required()
-                    ->default(now()),
-            ]);
-    }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('client.name')
+                TextColumn::make('client.name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('amount')
+                TextColumn::make('sale.date')
+                    ->date()
+                    ->label('Sale Date')
+                    ->sortable(),
+                BadgeColumn::make('sale.status')
+                    ->label('Sale Status')
+                    ->colors(SaleStatusEnum::enumColors())
+                    ->sortable(),
+                TextColumn::make('amount')
                     ->money('DZD', true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('date')
+                TextColumn::make('date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->since(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->since(),
             ])
             ->filters([
-                //
+                TernaryFilter::make('Sale Status')
+                    ->placeholder('All')
+                    ->trueLabel('Paid')
+                    ->falseLabel('Unpaid')
+                    ->queries(
+                        true: fn (Builder $query) => $query->whereHas('sale', fn ($query) => $query->where('status', SaleStatusEnum::PAID->name)),
+                        false: fn (Builder $query) => $query->whereHas('sale', fn ($query) => $query->where('status', SaleStatusEnum::UNPAID->name)),
+                    )
+
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
             ]);
     }
 

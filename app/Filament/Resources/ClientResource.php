@@ -2,16 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Forms;
+use Filament\Tables;
+use App\Models\Client;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\ClientResource\Pages;
+use App\Filament\Resources\ClientResource\Pages\EditClient;
 use App\Filament\Resources\ClientResource\RelationManagers;
+use App\Filament\Resources\ClientResource\Pages\ListClients;
+use App\Filament\Resources\ClientResource\Pages\CreateClient;
 use App\Filament\Resources\ClientResource\RelationManagers\SalesRelationManager;
 use App\Filament\Resources\ClientResource\RelationManagers\SettlementsRelationManager;
-use App\Models\Client;
-use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
-use Filament\Tables;
 
 class ClientResource extends Resource
 {
@@ -58,7 +67,11 @@ class ClientResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->sortable()
                     ->searchable(),
+                TextColumn::make('sales_count')
+                    ->counts('sales')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('balance')
@@ -74,7 +87,11 @@ class ClientResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                Filter::make('fully paid clients')
+                    ->query(function (Builder $query) {
+                        $query->where('balance', 0);
+                    }),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -88,6 +105,7 @@ class ClientResource extends Resource
     {
         return [
             SalesRelationManager::class,
+            SettlementsRelationManager::class
         ];
     }
 

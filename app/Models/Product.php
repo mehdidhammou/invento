@@ -69,6 +69,13 @@ class Product extends Model
         );
     }
 
+    public function latestSalePrice(): Attribute
+    {
+        return new Attribute(
+            get: fn ($value) => $this->orders()->orderBy('date', 'desc')->first()->pivot->sale_price ?? 0,
+        );
+    }
+
     // scopes
     public function scopeBestSelling($query)
     {

@@ -2,9 +2,11 @@
 
 namespace App\Observers;
 
-use App\Enums\SaleStatusEnum;
-use App\Models\Client;
 use App\Models\Sale;
+use App\Models\Client;
+use App\Enums\SaleStatusEnum;
+use App\Services\SaleService;
+use Filament\Notifications\Notification;
 
 class SaleObserver
 {
@@ -16,14 +18,6 @@ class SaleObserver
      */
     public function created(Sale $sale)
     {
-        $total = 0;
-        foreach ($sale->saleProducts as $saleProduct) {
-            $total += $saleProduct->sale_price * $saleProduct->quantity;
-        }
-        $sale->total_price = $total - ($total * $sale->discount / 100);
-
-        $sale->client->balance += $sale->total_price - $sale->total_paid;
-        $sale->client->save();
     }
 
     /**
@@ -34,7 +28,26 @@ class SaleObserver
      */
     public function updated(Sale $sale)
     {
-        
+        if ($sale->isDirty('purchased')) {
+            if ($sale->purchased) {
+                SaleService::resetTotalPrice($sale);
+                SaleService::destockProducts($sale);
+                SaleService::addBalanceToClient($sale);
+            }
+        }
+
+        if ($sale->isDirty('total_paid')) {
+            if ($sale->total_paid == $sale->total_price) {
+                $sale->status = saleStatusEnum::PAID->name;
+                Notification::make()
+                    ->success()
+                    ->title('Congrats!, sale has been fully paid')
+                    ->send();
+            } else {
+                $sale->status = saleStatusEnum::UNPAID->name;
+            }
+            $sale->saveQuietly();
+        }
     }
 
     /**

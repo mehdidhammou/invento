@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use Carbon\Carbon;
 use App\Models\Sale;
 use Filament\Widgets\LineChartWidget;
 
@@ -11,17 +12,33 @@ class YearlyAnalysisWidget extends LineChartWidget
 
     protected function getHeading(): string
     {
-        return 'INACCURATE!!!';
+        return 'All Time Income';
     }
 
     protected function getData(): array
     {
         // get the minimum and maximum year of the sales
+        $minYear = Carbon::parse(Sale::min('date'))->year;
+        $maxYear = Carbon::parse(Sale::max('date'))->year;
+
+        // get the number of steps
+        $steps = floor(($maxYear - $minYear) / 12);
+        
+        // data array
         $data = [];
-        $data[] = Sale::whereMonth('date', 1)->whereYear('date', now()->year)->sum('total_price');
-        for ($i = 1; $i < 12; $i++) {
-            $data[] = $data[$i - 1] + Sale::whereMonth('date', $i + 1)->whereYear('date', now()->year)->sum('total_price');
+
+        // labels array
+        $labels = [];
+
+        $data[] = Sale::whereYear('date', $minYear)->sum('total_price');
+        $i = 1;
+
+        while ($minYear < $maxYear) {
+            $data[] = $data[$i-1] + Sale::whereYear('date', $minYear + $steps)->sum('total_price');
+            $i++;
+            $minYear += $steps;
         }
+        // labels
         return [
             'datasets' => [
                 [
@@ -29,7 +46,7 @@ class YearlyAnalysisWidget extends LineChartWidget
                     'data' => $data,
                 ],
             ],
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'labels' => $labels,
         ];
     }
 }

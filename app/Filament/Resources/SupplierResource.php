@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SupplierResource\Pages;
-use App\Filament\Resources\SupplierResource\RelationManagers;
-use App\Models\Supplier;
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
+use App\Models\Supplier;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\SupplierResource\Pages;
+use Filament\Tables\Filters\Filter;
 
 class SupplierResource extends Resource
 {
@@ -42,10 +42,8 @@ class SupplierResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('balance')
-                    ->required()
                     ->numeric()
                     ->default(0)
-                    ->maxLength(255)
                     ->disabled(),
             ]);
     }
@@ -54,30 +52,36 @@ class SupplierResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('surname')
+                TextColumn::make('surname')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('orders_count')
+                    ->counts('orders')
+                    ->sortable(),
+                TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('phone')
+                TextColumn::make('phone')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('balance')
+                TextColumn::make('balance')
                     ->sortable()
                     ->money('DZD', true),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->since()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->since()
                     ->sortable(),
             ])
             ->filters([
-                //
+                Filter::make('fully paid suppliers')
+                    ->query(function (Builder $query) {
+                        $query->where('balance', 0);
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

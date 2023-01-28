@@ -2,17 +2,19 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProductResource\RelationManagers\SalesRelationManager;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Product;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
-use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers\OrdersRelationManager;
-use App\Filament\Resources\ProductResource\Widgets\StockValue;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\ProductResource\Pages;
+use App\Filament\Resources\ProductResource\Widgets\StockValue;
+use App\Filament\Resources\ProductResource\RelationManagers\SalesRelationManager;
+use App\Filament\Resources\ProductResource\RelationManagers\OrdersRelationManager;
 
 class ProductResource extends Resource
 {
@@ -27,13 +29,14 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('category_id')->relationship('category', 'name'),
+                Forms\Components\Select::make('category_id')
+                    ->relationship('category', 'name'),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('total_quantity')
-                    ->disabled(fn (string $context) => $context === 'create')
-                    ->required(),
+                    ->disabled()
+                    ->default(0),
             ]);
     }
 
@@ -50,12 +53,15 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('total_quantity')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('latest_unit_price')
+                    ->label('Unit Price')
                     ->money('DZD', true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('latest_sale_price')->money('DZD', true)
+                    ->label('Sale Price')
                     ->money('DZD', true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('latest_order_id')
+                    ->label('Order ID')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -67,10 +73,17 @@ class ProductResource extends Resource
                     ->since(),
             ])
             ->filters([
-                SelectFilter::make('category_id') 
+                SelectFilter::make('category_id')
                     ->relationship('category', 'name')
                     ->label('Categoies')
                     ->multiple(),
+                Filter::make('has an Order')
+                    ->query(fn (Builder $query) => $query->whereHas('orders'))
+                    ->toggle(),
+                Filter::make('without Order')
+                    ->query(fn (Builder $query) => $query->whereDoesntHave('orders'))
+                    ->toggle(),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -85,7 +98,6 @@ class ProductResource extends Resource
     {
         return [
             OrdersRelationManager::class,
-            SalesRelationManager::class,
         ];
     }
 
@@ -95,13 +107,6 @@ class ProductResource extends Resource
             'index' => Pages\ListProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getWidgets(): array
-    {
-        return [
-            StockValue::class,
         ];
     }
 }

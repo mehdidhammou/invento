@@ -11,7 +11,7 @@ class CurrentYearAnalysisWidget extends LineChartWidget
 
     protected function getHeading(): string
     {
-        return 'Current Year Analysis'. ' ' . now()->year;
+        return now()->year. ' Income';
     }
 
     protected function getData(): array
