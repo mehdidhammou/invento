@@ -16,7 +16,7 @@ class OrderProductObserver
      */
     public function created(OrderProduct $orderProduct)
     {
-        OrderService::updateConnectedAttributes($orderProduct->order);
+        $orderProduct->order->total_price += $orderProduct->unit_price * $orderProduct->quantity;
     }
 
     /**
@@ -27,7 +27,9 @@ class OrderProductObserver
      */
     public function updated(OrderProduct $orderProduct)
     {
-        OrderService::updateConnectedAttributes($orderProduct->order);
+        if($orderProduct->isDirty('quantity') || $orderProduct->isDirty('unit_price')) {
+            OrderService::resetTotalPrice($orderProduct->order);
+        }
     }
     
     /**
@@ -38,7 +40,7 @@ class OrderProductObserver
      */
     public function deleted(OrderProduct $orderProduct)
     {
-        OrderService::updateConnectedAttributes($orderProduct->order);
+        OrderService::resetTotalPrice($orderProduct->order);
     }
 
     /**

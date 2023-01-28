@@ -15,6 +15,8 @@ class SaleProduct extends Pivot
      */
     protected $table = 'sale_product';
 
+    public $incrementing = true;
+
     protected $fillable = [
         'sale_id',
         'product_id',

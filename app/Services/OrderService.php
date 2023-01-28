@@ -6,23 +6,25 @@ use App\Models\Order;
 
 class OrderService
 {
-    public static function getOrderFilename($order)
+    public static function generateOrderFileName($order)
     {
         return 'order_' . $order->id . '_' . $order->date . '.pdf';
     }
 
-    public static function updateConnectedAttributes(Order $order)
-    {
-        // update total price
+    public static function resetTotalPrice(Order $order){
         $new_total_price = 0;
         foreach ($order->orderProducts as $orderProduct) {
             $new_total_price += $orderProduct->unit_price * $orderProduct->quantity;
         }
         $order->total_price = $new_total_price;
-        $old_amount_owed = $order->getOriginal('total_price') - $order->getOriginal('total_paid');
-        $new_amount_owed = $order->total_price - $order->total_paid;
-        $order->supplier->balance += $old_amount_owed - $new_amount_owed;
-        $order->supplier->save();
         $order->saveQuietly();
+
+    }
+
+    public static function addProductsToStock(Order $order){
+        foreach ($order->orderProducts as $orderProduct) {
+            $orderProduct->product->total_quantity += $orderProduct->quantity;
+            $orderProduct->product->saveQuietly();
+        }
     }
 }

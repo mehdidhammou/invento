@@ -4,32 +4,23 @@ namespace App\Filament\Resources;
 
 use Filament\Tables;
 use App\Models\Order;
-use App\Models\Product;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use App\Enums\OrderStatusEnum;
-use PhpParser\Node\Stmt\Label;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Filament\Resources\OrderResource\RelationManagers\SettlementsRelationManager;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\TextInput\Mask;
 use App\Filament\Resources\OrderResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\OrderResource\RelationManagers;
-use Filament\Forms\Components\Actions\Modal\Actions\Action;
-use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 
 class OrderResource extends Resource
 {
@@ -52,25 +43,24 @@ class OrderResource extends Resource
                                 ->relationship('supplier', 'name')
                                 ->preload()
                                 ->required(),
+                            DatePicker::make('date')
+                                ->default(now())
+                                ->required(),
                             TextInput::make('total_price')
-                                ->required()
                                 ->numeric()
                                 ->disabled()
                                 ->default(0),
                             TextInput::make('total_paid')
-                                ->disabledOn('create')
+                                ->disabled()
                                 ->numeric()
-                                ->required()
-                                ->lte('total_price')
                                 ->default(0),
-                            DatePicker::make('date')
-                                ->default(now())
-                                ->required(),
                             Select::make('status')
                                 ->options(OrderStatusEnum::enumOptions())
-                                ->default(OrderStatusEnum::PENDING->name)
-                                ->disabledOn('create')
-                                ->required(),
+                                ->default(OrderStatusEnum::UNPAID->name)
+                                ->disabled(),
+                            Toggle::make('delivered')
+                                ->required()
+                                ->disabledOn('create'),
                         ])
                     ]),
 
@@ -113,15 +103,29 @@ class OrderResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->label('Supplier'),
+                TextColumn::make('order_products_count')
+                    ->counts('orderProducts')
+                    ->label('# Products')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('total_price')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_paid')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')
                     ->sortable(),
+                IconColumn::make('delivered')
+                    ->options([
+                        'heroicon-o-check-circle' => 1,
+                        'heroicon-o-x-circle' => 0,
+                    ])
+                    ->colors([
+                        'success' => 1,
+                        'warning' => 0,
+                    ]),
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors(OrderStatusEnum::enumColors())
                     ->sortable(),
+
 
             ])
             ->filters([
@@ -143,7 +147,7 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            SettlementsRelationManager::class,
         ];
     }
 

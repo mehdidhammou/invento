@@ -17,7 +17,7 @@ class OrderObserver
      */
     public function created(Order $order)
     {
-        OrderService::updateConnectedAttributes($order);
+        //
     }
 
     /**
@@ -28,7 +28,10 @@ class OrderObserver
      */
     public function updated(Order $order)
     {
-        OrderService::updateConnectedAttributes($order);
+        if($order->isDirty('total_paid'))
+        if($order->isDirty('status') && in_array($order->status, [OrderStatusEnum::RECEIVED->name, OrderStatusEnum::PAID->name])) {
+            OrderService::addProductsToStock($order);
+        }
     }
 
     /**

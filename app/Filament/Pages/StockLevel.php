@@ -2,19 +2,13 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\TestWidget;
 use Filament\Tables;
 use App\Models\Product;
-use Livewire\Component;
 use Filament\Pages\Page;
-use Tables\Contracts\HasTable;
-use Illuminate\Contracts\View\View;
-use PhpParser\ErrorHandler\Collecting;
 use Filament\Tables\Actions\BulkAction;
-use Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Filament\Tables\Actions\DeleteBulkAction;
 
 class StockLevel extends Page implements Tables\Contracts\HasTable
 
@@ -26,7 +20,7 @@ class StockLevel extends Page implements Tables\Contracts\HasTable
     protected static string $view = 'filament.pages.stock-level';
 
     public $products;
-    
+
     public function mount()
     {
         $this->products = count($this->getSelectedTableRecords()) ? $this->getSelectedTableRecords() : Product::all();
@@ -40,17 +34,40 @@ class StockLevel extends Page implements Tables\Contracts\HasTable
     protected function getTableColumns(): array
     {
         return [
+            Tables\Columns\TextColumn::make('category.name')
+                ->sortable()
+                ->searchable(),
             Tables\Columns\TextColumn::make('name')
-            ->searchable()
-            ->sortable(),
+                ->sortable()
+                ->searchable(),
             Tables\Columns\TextColumn::make('total_quantity')
-            ->sortable(),
+                ->sortable(),
             Tables\Columns\TextColumn::make('latest_unit_price')
-            ->sortable()
-            ->money('DZD', true),
-            Tables\Columns\TextColumn::make('latest_sale_price')
-            ->money('DZD', true)
-            ->sortable(),
+                ->money('DZD', true)
+                ->sortable(),
+            Tables\Columns\TextColumn::make('latest_sale_price')->money('DZD', true)
+                ->money('DZD', true)
+                ->sortable(),
+            Tables\Columns\TextColumn::make('latest_order_id')
+                ->sortable(),
+            Tables\Columns\TextColumn::make('created_at')
+                ->dateTime()
+                ->sortable()
+                ->since(),
+            Tables\Columns\TextColumn::make('updated_at')
+                ->dateTime()
+                ->sortable()
+                ->since(),
+        ];
+    }
+
+    public function getTableFilters(): array
+    {
+        return [
+            SelectFilter::make('category_id')
+                ->relationship('category', 'name')
+                ->label('Categoies')
+                ->multiple(),
         ];
     }
 

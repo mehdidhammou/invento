@@ -24,6 +24,7 @@ class SaleFactory extends Factory
             'client_id' => Client::pluck('id')->random(),
             'total_price' => 0,
             'total_paid' => 0,
+            'purchased' => 0,
             'date' => $this->faker->date(),
             'status' => SaleStatusEnum::UNPAID->name,
         ];

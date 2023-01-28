@@ -5,8 +5,7 @@ namespace App\Enums;
 enum OrderStatusEnum
 {
     case PAID;
-    case PENDING;
-    case RECEIVED;
+    case UNPAID;
 
     public static function values()
     {
@@ -34,8 +33,6 @@ enum OrderStatusEnum
 
         $colors = [
             'success',
-            'secondary',
-            'warning',
             'danger',
         ];
 

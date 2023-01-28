@@ -9,24 +9,18 @@ use App\Models\Product;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use App\Enums\SaleStatusEnum;
+use App\Filament\Resources\SaleResource\RelationManagers\SettlementsRelationManager;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
-use Filament\Tables\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\SaleResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\SaleResource\Pages\EditSale;
-use App\Filament\Resources\SaleResource\Pages\ListSales;
-use App\Filament\Resources\SaleResource\Pages\CreateSale;
-use App\Filament\Resources\SaleResource\RelationManagers;
 use App\Filament\Resources\SaleResource\RelationManagers\SaleProductsRelationManager;
 
 class SaleResource extends Resource
@@ -160,6 +154,7 @@ class SaleResource extends Resource
     {
         return [
             SaleProductsRelationManager::class,
+            SettlementsRelationManager::class,
         ];
     }
 

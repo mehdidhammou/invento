@@ -14,9 +14,11 @@ class ClientSettlementObserver
      */
     public function created(ClientSettlement $clientSettlement)
     {
-        $client = $clientSettlement->client;
-        $client->balance -= $clientSettlement->amount;
-        $client->save();
+        $clientSettlement->sale->total_paid += $clientSettlement->amount;
+        $clientSettlement->sale->save();
+        
+        $clientSettlement->client->balance -= $clientSettlement->amount;
+        $clientSettlement->client->save();
     }
 
     /**

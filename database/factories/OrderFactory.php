@@ -22,8 +22,9 @@ class OrderFactory extends Factory
             'supplier_id' => Supplier::pluck('id')->random(),
             'total_price' => 0,
             'total_paid' => 0,
+            'delivered' => 0,
             'date' => $this->faker->date(),
-            'status' => OrderStatusEnum::PENDING->name,
+            'status' => OrderStatusEnum::UNPAID->name,
         ];
     }
 }

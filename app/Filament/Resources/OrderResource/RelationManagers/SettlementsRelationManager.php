@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ClientResource\RelationManagers;
+namespace App\Filament\Resources\OrderResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -8,9 +8,6 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Livewire\LivewireManager;
 
 class SettlementsRelationManager extends RelationManager
 {
@@ -26,7 +23,7 @@ class SettlementsRelationManager extends RelationManager
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(function (RelationManager $livewire) {
-                        return $livewire->ownerRecord->balance;
+                        return $livewire->ownerRecord->total_paid;
                     })
                     ->required(),
                 DatePicker::make('date')

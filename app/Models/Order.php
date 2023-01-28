@@ -13,6 +13,7 @@ class Order extends Model
         'supplier_id',
         'total_price',
         'total_paid',
+        'delivered',
         'date',
         'status',
     ];

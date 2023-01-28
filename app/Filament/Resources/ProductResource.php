@@ -2,19 +2,17 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ProductResource\RelationManagers\SalesRelationManager;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Product;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\ProductResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ProductResource\RelationManagers;
+use App\Filament\Resources\ProductResource\RelationManagers\OrdersRelationManager;
 use App\Filament\Resources\ProductResource\Widgets\StockValue;
+use Filament\Tables\Filters\SelectFilter;
 
 class ProductResource extends Resource
 {
@@ -57,7 +55,7 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('latest_sale_price')->money('DZD', true)
                     ->money('DZD', true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('latest_order')
+                Tables\Columns\TextColumn::make('latest_order_id')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -69,7 +67,10 @@ class ProductResource extends Resource
                     ->since(),
             ])
             ->filters([
-                //
+                SelectFilter::make('category_id') 
+                    ->relationship('category', 'name')
+                    ->label('Categoies')
+                    ->multiple(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -82,7 +83,10 @@ class ProductResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            OrdersRelationManager::class,
+            SalesRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

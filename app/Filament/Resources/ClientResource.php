@@ -88,7 +88,6 @@ class ClientResource extends Resource
     {
         return [
             SalesRelationManager::class,
-            SettlementsRelationManager::class,
         ];
     }
 

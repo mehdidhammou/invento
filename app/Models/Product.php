@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Enums\OrderStatusEnum;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
+    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
     use HasFactory;
 
     protected $fillable = [
@@ -19,9 +19,10 @@ class Product extends Model
 
     protected $appends = [
         'latest_unit_price',
-        'latest_order',
+        'latest_sale_price',
     ];
 
+    // relationships
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -35,54 +36,42 @@ class Product extends Model
             ->withTimestamps();
     }
 
-    public function orderProducts()
-    {
-        return $this->hasMany(OrderProduct::class);
-    }
-
-    public function getLatestUnitPriceAttribute()
-    {
-        return DB::table('order_product')
-            ->join('orders', 'orders.id', '=', 'order_product.order_id')
-            ->where('orders.status', '!=', OrderStatusEnum::PENDING->name)
-            ->where('product_id', $this->id)
-            ->orderBy('orders.date', 'desc')
-            ->first()
-            ->unit_price ?? 0;
-    }
-    public function getLatestSalePriceAttribute()
-    {
-        return DB::table('order_product')
-            ->join('orders', 'orders.id', '=', 'order_product.order_id')
-            ->where('orders.status', '!=', OrderStatusEnum::PENDING->name)
-            ->where('product_id', $this->id)
-            ->orderBy('orders.date', 'desc')
-            ->first()
-            ->sale_price ?? 0;
-    }
-
-    public function scopeBestSelling($query)
-    {
-        return $query->withSum('orderProducts', 'quantity');
-    }
-
-    public function getLatestOrderAttribute()
-    {
-        return DB::table('order_product')
-            ->join('orders', 'orders.id', '=', 'order_product.order_id')
-            ->where('orders.status', '!=', OrderStatusEnum::PENDING->name)
-            ->where('order_product.product_id', $this->id)
-            ->orderBy('orders.date', 'desc')
-            ->first()
-            ->order_id ?? 'N/A';
-    }
-
-
     public function sales()
     {
         return $this->belongsToMany(Sale::class)
             ->using(SaleProduct::class)
             ->withPivot('quantity', 'unit_price', 'sale_price')
             ->withTimestamps();
+    }
+
+    public function orderProducts()
+    {
+        return $this->hasMany(OrderProduct::class);
+    }
+
+    public function saleProducts()
+    {
+        return $this->hasMany(SaleProduct::class);
+    }
+
+    // attributes
+    public function latestOrderId(): Attribute
+    {
+        return new Attribute(
+            get: fn ($value) => $this->orders()->orderBy('date', 'desc')->first()->id ?? null
+        );
+    }
+
+    public function latestUnitPrice(): Attribute
+    {
+        return new Attribute(
+            get: fn ($value) => $this->orders()->orderBy('date', 'desc')->first()->pivot->unit_price ?? 0,
+        );
+    }
+
+    // scopes
+    public function scopeBestSelling($query)
+    {
+        return $query->withSum('orderProducts', 'quantity');
     }
 }

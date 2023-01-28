@@ -19,6 +19,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('supplier_id')->nullable()->constrained()->nullOnDelete();
             $table->decimal('total_price', 12, 2)->default(0.00);
+            $table->boolean('delivered')->default(0);
             $table->decimal('total_paid', 12, 2)->default(0.00);
             $table->date('date')->default(now());
             $table->enum('status', OrderStatusEnum::values());

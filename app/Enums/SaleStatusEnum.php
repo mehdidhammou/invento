@@ -5,7 +5,6 @@ namespace App\Enums;
 enum SaleStatusEnum
 {
     case PAID;
-    case DESTOCKED;
     case UNPAID;
 
     public static function values()
@@ -34,8 +33,6 @@ enum SaleStatusEnum
 
         $colors = [
             'success',
-            'secondary',
-            'warning',
             'danger',
         ];
 

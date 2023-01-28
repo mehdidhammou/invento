@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('client_id')->nullable()->constrained()->nullOnDelete();
             $table->decimal('total_price', 12, 2)->default(0.00);
             $table->decimal('total_paid', 12, 2)->default(0.00);
+            $table->boolean('purchased')->default(0);
             $table->date('date')->default(now());
             $table->enum('status', SaleStatusEnum::values());
             $table->timestamps();
