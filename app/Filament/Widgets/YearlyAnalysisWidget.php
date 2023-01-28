@@ -17,36 +17,36 @@ class YearlyAnalysisWidget extends LineChartWidget
 
     protected function getData(): array
     {
-        // get the minimum and maximum year of the sales
-        $minYear = Carbon::parse(Sale::min('date'))->year;
-        $maxYear = Carbon::parse(Sale::max('date'))->year;
+        // // get the minimum and maximum year of the sales
+        // $minYear = Carbon::parse(Sale::min('date'))->year;
+        // $maxYear = Carbon::parse(Sale::max('date'))->year;
 
-        // get the number of steps
-        $steps = floor(($maxYear - $minYear) / 12);
+        // // get the number of steps
+        // $steps = floor(($maxYear - $minYear) / 12);
         
-        // data array
-        $data = [];
+        // // data array
+        // $data = [];
 
-        // labels array
-        $labels = [];
+        // // labels array
+        // $labels = [];
 
-        $data[] = Sale::whereYear('date', $minYear)->sum('total_price');
-        $i = 1;
+        // $data[] = Sale::whereYear('date', $minYear)->sum('total_price');
+        // $i = 1;
 
-        while ($minYear < $maxYear) {
-            $data[] = $data[$i-1] + Sale::whereYear('date', $minYear + $steps)->sum('total_price');
-            $i++;
-            $minYear += $steps;
-        }
+        // while ($minYear < $maxYear) {
+        //     $data[] = $data[$i-1] + Sale::whereYear('date', $minYear + $steps)->sum('total_price');
+        //     $i++;
+        //     $minYear += $steps;
+        // }
         // labels
         return [
             'datasets' => [
                 [
                     'label' => 'Income Evolution',
-                    'data' => $data,
+                    'data' => [],
                 ],
             ],
-            'labels' => $labels,
+            'labels' => [],
         ];
     }
 }
