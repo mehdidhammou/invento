@@ -47,7 +47,7 @@ class StockLevel extends Page implements Tables\Contracts\HasTable
                 ->label('Unit Price')
                 ->money('DZD', true)
                 ->sortable(),
-            Tables\Columns\TextColumn::make('latest_sale_price')->money('DZD', true)
+            Tables\Columns\TextColumn::make('latest_sale_price')
                 ->label('Sale Price')
                 ->money('DZD', true)
                 ->sortable(),

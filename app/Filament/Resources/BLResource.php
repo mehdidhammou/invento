@@ -34,6 +34,7 @@ class BLResource extends Resource
                 Select::make('supplier_id')
                     ->options(Supplier::pluck('name', 'id'))
                     ->reactive()
+                    ->label('Supplier')
                     ->searchable()
                     ->preload()
                     ->required()
@@ -41,9 +42,11 @@ class BLResource extends Resource
                         $set('order_id', null);
                     }),
                 Forms\Components\Select::make('order_id')
+                    ->label('Order')
                     ->options(function (callable $get) {
                         if ($get('supplier_id')) {
-                            return Order::where('supplier_id', $get('supplier_id')->where('delivered', 1))
+                            return Order::where('supplier_id', $get('supplier_id'))
+                                ->where('delivered', 1)
                                 ->pluck('date', 'id');
                         }
                     })

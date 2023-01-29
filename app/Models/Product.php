@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
@@ -81,4 +82,14 @@ class Product extends Model
     {
         return $query->withSum('orderProducts', 'quantity');
     }
+
+    // public function scopeLatestPrices($query)
+    // {
+    //     return $query
+    //         ->addSelect(DB::raw('order_product.unit_price as latest_unit_price , order_product.sale_price as latest_sale_price'))
+    //         ->join('order_product', 'products.id', '=', 'order_product.product_id')
+    //         ->join('orders', 'order_product.order_id', '=', 'orders.id')
+    //         ->orderBy('orders.date', 'desc')
+    //         ->first();
+    // }
 }
