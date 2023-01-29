@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -21,6 +22,7 @@ class Product extends Model
     protected $appends = [
         'latest_unit_price',
         'latest_sale_price',
+        'latest_order_id',
     ];
 
     // relationships
@@ -59,21 +61,27 @@ class Product extends Model
     public function latestOrderId(): Attribute
     {
         return new Attribute(
-            get: fn ($value) => $this->orders()->orderBy('date', 'desc')->first()->id ?? null
+            get: fn ($value) => $this->orderProducts(function ($query){
+                return $query->whereHas('order', fn($query) => $query->where('delivered', 1));
+            })->latest()->first()->order_id ?? 0
         );
     }
 
     public function latestUnitPrice(): Attribute
     {
         return new Attribute(
-            get: fn ($value) => $this->orders()->orderBy('date', 'desc')->first()->pivot->unit_price ?? 0,
+            get: fn ($value) => $this->orderProducts(function ($query){
+                return $query->whereHas('order', fn($query) => $query->where('delivered', 1));
+            })->latest()->first()->unit_price ?? 0
         );
     }
 
     public function latestSalePrice(): Attribute
     {
         return new Attribute(
-            get: fn ($value) => $this->orders()->orderBy('date', 'desc')->first()->pivot->sale_price ?? 0,
+            get: fn ($value) => $this->orderProducts(function ($query){
+                return $query->whereHas('order', fn($query) => $query->where('delivered', 1));
+            })->latest()->first()->sale_price ?? 0
         );
     }
 
@@ -83,13 +91,10 @@ class Product extends Model
         return $query->withSum('orderProducts', 'quantity');
     }
 
-    // public function scopeLatestPrices($query)
-    // {
-    //     return $query
-    //         ->addSelect(DB::raw('order_product.unit_price as latest_unit_price , order_product.sale_price as latest_sale_price'))
-    //         ->join('order_product', 'products.id', '=', 'order_product.product_id')
-    //         ->join('orders', 'order_product.order_id', '=', 'orders.id')
-    //         ->orderBy('orders.date', 'desc')
-    //         ->first();
-    // }
+    public function scopeLatestPrices($query)
+    {
+        return $query->with('orderProducts', function ($query) {
+            $query->whereHas('order', fn ($query) => $query->where('delivered', 1))->latest();
+        });
+    }
 }

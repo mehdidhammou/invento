@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Sale;
 use App\Models\Order;
+use App\Models\Invoice;
 use App\Models\Product;
-use App\Enums\OrderStatusEnum;
 use App\Models\Category;
 use App\Models\OrderProduct;
+use App\Enums\OrderStatusEnum;
 use App\Services\OrderService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
@@ -23,12 +24,7 @@ class Controller extends BaseController
 
     public function query()
     {
-        return DB::table('products')
-            ->join('order_product', 'products.id', '=', 'order_product.product_id')
-            ->join('orders', 'order_product.order_id', '=', 'orders.id')
-            ->orderBy('orders.date', 'desc')
-            ->select('products.*', 'order_product.quantity', 'order_product.unit_price', 'order_product.sale_price', 'orders.date')
-            ->get();
+        return Product::where('id', 1)->latestPrices()->first();
     }
 
     public function showOrder($id)
@@ -53,5 +49,35 @@ class Controller extends BaseController
             ]
         )->first();
         return view('export.sale', compact('sale'));
+    }
+
+    public function showInvoice($id)
+    {
+        $invoice = Invoice::where('order_id', $id)->with(
+            'order',
+            fn ($query) => $query->with(
+                [
+                    'orderProducts' => fn ($query) => $query->with('product'),
+                    'supplier'
+                ]
+            )
+        )->first();
+
+        return view('export.invoice', compact('invoice'));
+    }
+
+    public function showBl($id)
+    {
+        $bl = Invoice::where('order_id', $id)->with(
+            'order',
+            fn ($query) => $query->with(
+                [
+                    'orderProducts' => fn ($query) => $query->with('product'),
+                    'supplier'
+                ]
+            )
+        )->first();
+
+        return view('export.bl', compact('bl'));
     }
 }

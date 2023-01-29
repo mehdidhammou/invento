@@ -40,14 +40,11 @@ class SupplierSettlementObserver
      */
     public function deleted(SupplierSettlement $supplierSettlement)
     {
-        $supplier = $supplierSettlement->supplier;
-        $supplier->balance += $supplierSettlement->amount;
-
-        $order = $supplierSettlement->order;
-        $order->total_paid -= $supplierSettlement->amount;
-
-        $order->save();
-        $supplier->save();
+        $supplierSettlement->supplier->balance += $supplierSettlement->amount;
+        $supplierSettlement->supplier->save();
+                
+        $supplierSettlement->order->total_paid -= $supplierSettlement->amount;
+        $supplierSettlement->order->save();
     }
 
     /**

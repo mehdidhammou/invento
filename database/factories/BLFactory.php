@@ -19,7 +19,7 @@ class BLFactory extends Factory
     {
         return [
             'number' => $this->faker->unique()->numberBetween(100000, 999999),
-            'date' => $this->faker->date(),
+            'date' => now(),
             'order_id' => Order::pluck('id')->random(),
         ];
     }

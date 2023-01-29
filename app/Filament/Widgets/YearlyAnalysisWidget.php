@@ -4,41 +4,31 @@ namespace App\Filament\Widgets;
 
 use Carbon\Carbon;
 use App\Models\Sale;
+use App\Models\Order;
 use Filament\Widgets\LineChartWidget;
 
 class YearlyAnalysisWidget extends LineChartWidget
 {
-    protected static ?string $heading = 'Chart';
+    protected static ?string $heading = 'All time income';
 
-    protected function getHeading(): string
-    {
-        return 'All Time Income';
-    }
 
     protected function getData(): array
     {
-        // // get the minimum and maximum year of the sales
-        // $minYear = Carbon::parse(Sale::min('date'))->year;
-        // $maxYear = Carbon::parse(Sale::max('date'))->year;
+        // $year_range = Order::selectRaw('max(date) as maxYear, min(date) as minYear')->get();
+        // $minYear = Carbon::parse($year_range[0]->minYear);
+        // $maxYear = Carbon::parse($year_range[0]->maxYear);
 
-        // // get the number of steps
-        // $steps = floor(($maxYear - $minYear) / 12);
-        
-        // // data array
+        // // divide the range into 12 steps
+        // $steps = $maxYear->diffInYears($minYear) / 12;
         // $data = [];
-
-        // // labels array
         // $labels = [];
-
-        // $data[] = Sale::whereYear('date', $minYear)->sum('total_price');
-        // $i = 1;
-
-        // while ($minYear < $maxYear) {
-        //     $data[] = $data[$i-1] + Sale::whereYear('date', $minYear + $steps)->sum('total_price');
-        //     $i++;
-        //     $minYear += $steps;
+        // $data[] = Sale::whereBetween('date', [$maxYear->subYears($steps), $maxYear])->sum('total_price');
+        // $labels[] = $minYear;
+        // for($i = 1; $i < 11; $i++) {
+        //     $data[] = $data[$i - 1] + Sale::whereBetween('date', [Carbon::parse($minYear)->addYears($i * $steps), Carbon::parse($minYear)->addYears(($i + 1) * $steps)])->sum('total_price');
+        //     $labels[] = $minYear + $i * $steps;
         // }
-        // labels
+
         return [
             'datasets' => [
                 [

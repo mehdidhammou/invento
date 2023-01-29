@@ -10,7 +10,7 @@
                 </div>
 
                 <div class="text-3xl">
-                    {{ money($this->products->sum(fn ($product) => $product->latest_unit_price * $product->total_quantity), 'DZD', true)}}
+                    {{ $purchase_total = money($this->products->sum(fn ($product) => $product->latest_unit_price * $product->total_quantity), 'DZD', true)}}
                 </div>
 
             </div>
@@ -26,7 +26,7 @@
                 </div>
 
                 <div class="text-3xl">
-                    {{ money($this->products->sum(fn ($product) => $product->latest_sale_price * $product->total_quantity), 'DZD', true) }}
+                    {{$sale_total =  money($this->products->sum(fn ($product) => $product->latest_sale_price * $product->total_quantity), 'DZD', true) }}
                 </div>
 
             </div>

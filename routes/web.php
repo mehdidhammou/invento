@@ -33,6 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('export/')->group(function (){
         Route::get('order/{id}', [Controller::class, 'showOrder'])->name('export.order');
         Route::get('sale/{id}', [Controller::class , 'showSale'])->name('export.sale');
+        Route::get('invoice/{id}', [Controller::class, 'showInvoice'])->name('export.invoice');
+        Route::get('bl/{id}', [Controller::class, 'showBl'])->name('export.bl');
+
     });
 });
 

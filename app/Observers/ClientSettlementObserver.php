@@ -39,15 +39,11 @@ class ClientSettlementObserver
      */
     public function deleted(ClientSettlement $clientSettlement)
     {
-        $client = $clientSettlement->client;
-        $client->balance += $clientSettlement->amount;
+        $clientSettlement->client->balance += $clientSettlement->amount;
+        $clientSettlement->client->save();
 
-        $sale = $clientSettlement->sale;
-        $sale->total_paid -= $clientSettlement->amount;
-
-        $sale->save();
-
-        $client->save();
+        $clientSettlement->sale->total_paid -= $clientSettlement->amount;
+        $clientSettlement->sale->save();
     }
 
     /**

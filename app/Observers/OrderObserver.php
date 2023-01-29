@@ -2,8 +2,10 @@
 
 namespace App\Observers;
 
-use App\Enums\OrderStatusEnum;
 use App\Models\Order;
+use App\Models\Invoice;
+use App\Enums\OrderStatusEnum;
+use App\Models\BL;
 use App\Services\OrderService;
 use Filament\Notifications\Notification;
 
@@ -17,7 +19,22 @@ class OrderObserver
      */
     public function created(Order $order)
     {
-        //
+        // create invoice
+        Invoice::factory(1)->create([
+            'order_id' => $order->id,
+            'number' => 0
+        ]);
+        
+        // create bl
+        BL::factory(1)->create([
+            'order_id' => $order->id,
+            'number' => 0
+        ]);
+
+        Notification::make()
+        ->success()
+        ->title('Invoice and BL created')
+        ->send();
     }
 
     /**

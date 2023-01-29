@@ -55,6 +55,7 @@ class SaleResource extends Resource
                                 ->required(),
                             DatePicker::make('date')
                                 ->default(now())
+                                ->minDate(today())
                                 ->required(),
                             Toggle::make('purchased')
                                 ->inline(false)
@@ -112,9 +113,11 @@ class SaleResource extends Resource
                                 ->required()
                                 ->reactive()
                                 ->afterStateUpdated(function ($state, callable $set) {
-                                    $product = Product::where('id', $state)->first();
-                                    $set('unit_price', $product->latest_unit_price);
-                                    $set('sale_price', $product->latest_sale_price);
+                                    if ($state == null) return;
+                                    $product = Product::latestPrices()->where('id', $state)->get();
+                                    if ($product == null) return;
+                                    $set('unit_price', $product->orderProducts->first()->unit_price);
+                                    $set('sale_price', $product->orderProducts->first()->sale_price);
                                 }),
                             TextInput::make('quantity')
                                 ->required()

@@ -29,7 +29,7 @@ class StockLevel extends Page implements Tables\Contracts\HasTable
 
     protected function getTableQuery(): Builder
     {
-        return Product::query();
+        return Product::latestPrices();
     }
 
     protected function getTableColumns(): array
@@ -48,8 +48,12 @@ class StockLevel extends Page implements Tables\Contracts\HasTable
                 ->money('DZD', true)
                 ->sortable(),
             Tables\Columns\TextColumn::make('latest_sale_price')
+                ->money('DZD', true)
                 ->label('Sale Price')
                 ->money('DZD', true)
+                ->sortable(),
+            Tables\Columns\TextColumn::make('latest_order_id')
+                ->label('Order ID')
                 ->sortable(),
             Tables\Columns\TextColumn::make('latest_order_id')
                 ->label('Order ID')

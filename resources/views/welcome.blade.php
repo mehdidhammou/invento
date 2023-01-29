@@ -128,5 +128,8 @@
                 </div>
             </div>
         </div>
+        <div class="my-4">
+            {{ $products }}
+        </div>
     </body>
 </html>

@@ -2,16 +2,22 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\BestSellingProducts;
-use App\Filament\Widgets\CurrentYearAnalysisWidget;
+use Illuminate\Contracts\View\View;
 use App\Filament\Widgets\TopClients;
-use App\Filament\Widgets\YearlyAnalysisWidget;
 use Filament\Pages\Dashboard as BasePage;
+use App\Filament\Widgets\BestSellingProducts;
+use App\Filament\Widgets\YearlyAnalysisWidget;
+use App\Filament\Widgets\CurrentYearAnalysisWidget;
 
 class Dashboard extends BasePage
 {
     protected static string $view = 'filament.pages.dashboard';
 
+
+    protected function getHeader(): View
+    {
+        return view('filament.dashboard-header');
+    }
 
     protected function getHeaderWidgets(): array
     {
@@ -21,5 +27,10 @@ class Dashboard extends BasePage
             BestSellingProducts::class,
             TopClients::class
         ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [];
     }
 }

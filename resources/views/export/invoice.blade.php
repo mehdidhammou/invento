@@ -3,16 +3,16 @@
         <div class="w-full p-4 border border-gray-200 rounded-md">
             <div class="w-full flex items-center justify-around">
                 <h1 class="font-semibold">
-                    Sale ID:
+                    Invoice Number:
                 </h1>
                 <span>
-                    {{ $sale->id }}
+                    {{ $invoice->number }}
                 </span>
                 <h1 class="font-semibold">
-                    Sale Date:
+                    Order Date:
                 </h1>
                 <span>
-                    {{ $sale->date }}
+                    {{ $invoice->order->date }}
                 </span>
 
             </div>
@@ -27,29 +27,36 @@
                         Quantity
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Price
+                        Unit price
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Sale Price
                     </th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($sale->saleProducts as $saleProduct)
+                @foreach ($invoice->order->orderProducts as $orderProduct)
                     <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
                         <td class="px-6 py-4">
-                            {{ $saleProduct->product->name }}
+                            {{ $orderProduct->product->name }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ $saleProduct->quantity }}
+                            {{ $orderProduct->quantity }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ money($saleProduct->sale_price, 'DZD', true) }}
+                            {{ money($orderProduct->unit_price, 'DZD', true) }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ money($orderProduct->sale_price, 'DZD', true) }}
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
         <div class="w-full flex items-center justify-between gap-4">
+
             <div class="w-1/2 border border-gray-200 rounded-md p-4">
-                <h1 class="font-semibold uppercase">Client Info</h1>
+                <h1 class="font-semibold uppercase">Supplier Info</h1>
                 <hr class="w-full bg-gray-600 my-2">
                 <div class="flex flex-col gap-2">
                     <div class="w-full flex justify-between">
@@ -57,7 +64,7 @@
                             Name:
                         </p>
                         <p class="font-semibold">
-                            {{ $sale->client->name }}
+                            {{ $invoice->order->supplier->name }}
                         </p>
                     </div>
                     <hr class="w-full bg-gray-600 my-2">
@@ -66,7 +73,7 @@
                             Address:
                         </p>
                         <p class="font-semibold">
-                            {{ $sale->client->email }}
+                            {{ $invoice->order->supplier->email }}
                         </p>
                     </div>
                     <hr class="w-full bg-gray-600 my-2">
@@ -75,7 +82,7 @@
                             Phone:
                         </p>
                         <p class="font-semibold">
-                            {{ $sale->client->phone }}
+                            {{ $invoice->order->supplier->phone }}
                         </p>
                     </div>
                 </div>
@@ -89,7 +96,7 @@
                             Total HT:
                         </p>
                         <p class="font-semibold">
-                            {{ money($sale->total_price, 'DZD', true) }}
+                            {{ money($invoice->order->total_price, 'DZD', true) }}
                         </p>
                     </div>
                     <hr class="w-full bg-gray-600 my-2">
@@ -98,7 +105,7 @@
                             TVA:
                         </p>
                         <p class="font-semibold">
-                            N/A
+                            19%
                         </p>
                     </div>
                     <hr class="w-full bg-gray-600 my-2">
@@ -107,7 +114,7 @@
                             Total TTC:
                         </p>
                         <p class="font-semibold">
-                            {{ money($sale->total_price, 'DZD', true) }}
+                            {{ money($invoice->order->total_price * 1.19, 'DZD', true) }}
                         </p>
                     </div>
                 </div>

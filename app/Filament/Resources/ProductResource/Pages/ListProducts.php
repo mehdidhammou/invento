@@ -22,7 +22,7 @@ class ListProducts extends ListRecords
 
     protected function getHeaderWidgets(): array
     {
-        
+
         return [
             StockValue::class,
         ];

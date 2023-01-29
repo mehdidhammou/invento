@@ -57,6 +57,7 @@ class OrderResource extends Resource
                                 ->required(),
                             DatePicker::make('date')
                                 ->default(now())
+                                ->minDate(today())
                                 ->required(),
                             Toggle::make('delivered')
                                 ->inline(false)

@@ -44,6 +44,9 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->sortable()
                     ->searchable(),
@@ -56,7 +59,8 @@ class ProductResource extends Resource
                     ->label('Unit Price')
                     ->money('DZD', true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('latest_sale_price')->money('DZD', true)
+                Tables\Columns\TextColumn::make('latest_sale_price')
+                    ->money('DZD', true)
                     ->label('Sale Price')
                     ->money('DZD', true)
                     ->sortable(),

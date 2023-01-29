@@ -43,7 +43,7 @@ class SaleProductsRelationManager extends RelationManager
                     ->default(0)
                     ->disabled(fn (string $context) => $context === 'create')
                     ->numeric()
-                    ->maxValue(fn (callable $get) => $get('product_id') ? Product::find($get('product_id'))->total_quantity : 0)
+                    ->maxValue(fn (callable $get) => $get('product_id') ? Product::where('id', $get('product_id'))->total_quantity : 0)
                     ->minValue(0),
                 TextInput::make('unit_price')
                     ->numeric()
