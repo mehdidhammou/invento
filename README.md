@@ -6,8 +6,8 @@
 
 ## Description:
 
-Invento est une application Web de gestion et de reporting de stock qui offre des formes et de tableaux et de graphiques pour améliorer la gestion commerciale. 
-Avec des règles de contraintes très	 fortes, L'application doit être fiable et offrir une réponse rapide aux besoins de l'utilisateur. Elle comprend des fonctionnalités telles que la gestion de clients, fournisseurs, produits, achats, ventes, stocks, factures, crédits, paiements, etc.
+Invento is a web inventory management and reporting application that offers forms and charts and graphs to improve businesses improve management.
+With very strong constraint rules, the application offers a rapid response to the user's needs. It includes functionalities such as the management of customers, suppliers, products, purchases, sales, stocks, invoices, credits, payments, etc.
 
 ## Configuration:
 
@@ -15,26 +15,26 @@ Avec des règles de contraintes très	 fortes, L'application doit être fiable e
 2.   [Composer](https://getcomposer.org/download/)
 3.   [Node.js](https://nodejs.org/en/download/)
 
-Clonez le référentiel :
+Clone the repo :
 
 ```
-git clone https://github.com/mehdidhammou/stock
+git clone https://github.com/mehdidhammou/invento
 ```
 
-Accédez au répertoire du projet :
+cd to the project :
 
 ```
-cd stock
+cd invento
 ```
 
-Installez les dépendances :
+install all dependencies :
 
 ```
 composer install
 npm install
 ```
 
-Créez une copie du fichier d'exemple de l'environnement:
+create a local .env file :
 
 - Linux
 
@@ -48,24 +48,24 @@ cp .env.example .env
 copy .env.example .env
 ```
 
-Générez une clé d'application :
+generate the app key :
 
 ```
 php artisan key:generate
 ```
 
-Configurez la connexion à la base de données dans le fichier `.env` :
+Configure the database connection in `.env` :
 
 ```
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=stock_db
+DB_DATABASE=invento_db
 DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Exécutez les migrations de base de données :
+run the migrations :
 
 ```
 php artisan migrate:fresh --seed
@@ -73,14 +73,12 @@ php artisan migrate:fresh --seed
 
 ## Utilisation
 
-Pour démarrer le serveur de développement, exécutez la commande suivante :
+run the dev servers :
 
 ```
 npm run dev
 php artisan serve
 ```
-
-Vous pouvez alors accéder à l'application à [ localhost ](http://localhost:8000)
 
 ## Licence
 
@@ -88,63 +86,7 @@ Ce projet est sous licence MIT.
 
 ## Auteurs
 
-Créateurs et mainteneurs
+creators and maintainers
 
 -   [mehdidhammou](https://github.com/mehdidhammou)
 -   [walidksb](https://github.com/walidksb)
-
-
-## railway Configuration
-```
-APP_NAME=Laravel
-APP_ENV=production
-APP_KEY=base64:ZGjxxddTs8e2l/Nv6ZLuodpcuyDLKIJiDLdbO0KeTEU=
-APP_DEBUG=false
-APP_URL=stock-production-c34d.up.railway.app
-LOG_CHANNEL=stack
-LOG_DEPRECATIONS_CHANNEL=null
-LOG_LEVEL=debug
-DB_CONNECTION=mysql
-DB_HOST=containers-us-west-178.railway.app
-DB_PORT=7157
-DB_DATABASE=railway
-DB_USERNAME=root
-DB_PASSWORD=r4SqTyBzvE0IHJZBKn7y
-BROADCAST_DRIVER=log
-CACHE_DRIVER=file
-FILESYSTEM_DISK=local
-QUEUE_CONNECTION=sync
-SESSION_DRIVER=file
-SESSION_LIFETIME=120
-MEMCACHED_HOST=127.0.0.1
-REDIS_HOST=127.0.0.1
-REDIS_PASSWORD=null
-REDIS_PORT=6379
-MAIL_MAILER=smtp
-MAIL_HOST=mailhog
-MAIL_PORT=1025
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS=hello@example.com
-MAIL_FROM_NAME=${APP_NAME}
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET=
-AWS_USE_PATH_STYLE_ENDPOINT=false
-PUSHER_APP_ID=
-PUSHER_APP_KEY=
-PUSHER_APP_SECRET=
-PUSHER_HOST=
-PUSHER_PORT=443
-PUSHER_SCHEME=https
-PUSHER_APP_CLUSTER=mt1
-VITE_PUSHER_APP_KEY=${PUSHER_APP_KEY}
-VITE_PUSHER_HOST=${PUSHER_HOST}
-VITE_PUSHER_PORT=${PUSHER_PORT}
-VITE_PUSHER_SCHEME=${PUSHER_SCHEME}
-VITE_PUSHER_APP_CLUSTER=${PUSHER_APP_CLUSTER}
-NIXPACKS_BUILD_CMD=npm run build && php artisan migrate --seed --force && php artisan view:cache && php artisan route:cache && php artisan config:cache
-NIXPACKS_INSTALL_CMD=mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx && composer install --optimize-autoloader && npm ci
-```
