@@ -113,8 +113,12 @@ class SaleResource extends Resource
                                 ->required()
                                 ->reactive()
                                 ->afterStateUpdated(function ($state, callable $set) {
-                                    if ($state == null) return;
-                                    $product = Product::where('id', $state)->get();
+                                    if ($state == null) {
+                                        $set('unit_price', null);
+                                        $set('sale_price', null);
+                                        return;
+                                    };
+                                    $product = Product::where('id', $state)->first();
                                     if ($product == null) return;
                                     $set('unit_price', $product->latest_unit_price);
                                     $set('sale_price', $product->latest_sale_price);
