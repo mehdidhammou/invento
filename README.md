@@ -1,13 +1,8 @@
 <p align="center">
     <a href="https://laravel.com" target="_blank">
-        <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
+        <img src="public/favicon.ico" width="400" alt="Laravel Logo">
     </a>
 </p>
-
-## Description:
-
-Invento is a web inventory management and reporting application that offers forms and charts and graphs to improve businesses improve management.
-With very strong constraint rules, the application offers a rapid response to the user's needs. It includes functionalities such as the management of customers, suppliers, products, purchases, sales, stocks, invoices, credits, payments, etc.
 
 ## Configuration:
 
