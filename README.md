@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://laravel.com" target="_blank">
-        <img src="public/favicon.ico" width="400" alt="Laravel Logo">
+        <img src="public/logo.svg" width="500" alt="Laravel Logo">
     </a>
 </p>
 
