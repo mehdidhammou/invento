@@ -114,10 +114,10 @@ class SaleResource extends Resource
                                 ->reactive()
                                 ->afterStateUpdated(function ($state, callable $set) {
                                     if ($state == null) return;
-                                    $product = Product::latestPrices()->where('id', $state)->get();
+                                    $product = Product::where('id', $state)->get();
                                     if ($product == null) return;
-                                    $set('unit_price', $product->orderProducts->first()->unit_price);
-                                    $set('sale_price', $product->orderProducts->first()->sale_price);
+                                    $set('unit_price', $product->latest_unit_price);
+                                    $set('sale_price', $product->latest_sale_price);
                                 }),
                             TextInput::make('quantity')
                                 ->required()
