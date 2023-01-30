@@ -8,6 +8,9 @@ use Filament\Pages\Dashboard as BasePage;
 use App\Filament\Widgets\BestSellingProducts;
 use App\Filament\Widgets\YearlyAnalysisWidget;
 use App\Filament\Widgets\CurrentYearAnalysisWidget;
+use App\Filament\Widgets\CurrentYearOrdersAnalysisWidget;
+use App\Filament\Widgets\MostOrderedProducts;
+use App\Filament\Widgets\TopSuppliers;
 
 class Dashboard extends BasePage
 {
@@ -31,6 +34,10 @@ class Dashboard extends BasePage
 
     protected function getFooterWidgets(): array
     {
-        return [];
+        return [
+            MostOrderedProducts::class,
+            TopSuppliers::class,
+            CurrentYearOrdersAnalysisWidget::class,
+        ];
     }
 }

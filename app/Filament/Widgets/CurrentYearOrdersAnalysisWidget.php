@@ -2,17 +2,15 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Sale;
 use App\Models\Order;
-use Illuminate\Support\Facades\DB;
 use Filament\Widgets\LineChartWidget;
 
-class CurrentYearAnalysisWidget extends LineChartWidget
+class CurrentYearOrdersAnalysisWidget extends LineChartWidget
 {
 
     protected function getHeading(): string
     {
-        return now()->year . ' Income';
+        return now()->year . ' Order Evolution';
     }
 
     protected function getData(): array
@@ -20,7 +18,7 @@ class CurrentYearAnalysisWidget extends LineChartWidget
         $monthlyIncomes = [];
 
         for ($i = 1; $i <= 12; $i++) {
-            $monthlyIncomes[] = Sale::whereBetween('date', [today()->startOfYear(), today()->startOfYear()->addMonths($i - 1)->endOfMonth()])->sum('total_price');
+            $monthlyIncomes[] = Order::whereBetween('date', [today()->startOfYear(), today()->startOfYear()->addMonths($i - 1)->endOfMonth()])->sum('total_price');
         }
 
         return [
