@@ -1,11 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\ClientResource\RelationManagers;
+namespace App\Filament\Resources\SupplierResource\RelationManagers;
 
+use Filament\Forms;
 use Filament\Tables;
-use App\Enums\SaleStatusEnum;
+use Filament\Resources\Form;
 use Filament\Resources\Table;
+use App\Enums\OrderStatusEnum;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class SettlementsRelationManager extends RelationManager
@@ -23,10 +28,10 @@ class SettlementsRelationManager extends RelationManager
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sale.date')
+                Tables\Columns\TextColumn::make('order.date')
                     ->sortable(),
-                BadgeColumn::make('sale.status')
-                    ->colors(SaleStatusEnum::enumColors())
+                BadgeColumn::make('order.status')
+                    ->colors(OrderStatusEnum::enumColors())
                     ->sortable(),
 
             ]);

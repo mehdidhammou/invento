@@ -12,14 +12,14 @@ class TopSuppliers extends PieChartWidget
 
     protected function getData(): array
     {
-        $suppliers = DB::table('orders')->join('suppliers', 'orders.supplier_id', '=', 'suppliers.id')->selectRaw('suppliers.name, sum(orders.total_paid) as total')->groupBy('suppliers.name')->get();
+        $suppliers = DB::table('orders')->join('suppliers', 'orders.supplier_id', '=', 'suppliers.id')->selectRaw('suppliers.id, suppliers.name, sum(orders.total_paid) as total')->groupBy(['suppliers.id','suppliers.name'])->get();
 
         $data = [];
         $labels = [];
 
-        foreach ($suppliers as $client) {
-            $data[] = $client->total;
-            $labels[] = $client->name;
+        foreach ($suppliers as $supplier) {
+            $data[] = $supplier->total;
+            $labels[] = $supplier->name;
         }
 
         $colors = WidgetService::generateRandomColors(count($data));

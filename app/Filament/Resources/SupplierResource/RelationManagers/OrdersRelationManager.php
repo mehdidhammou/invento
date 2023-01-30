@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ClientResource\RelationManagers;
+namespace App\Filament\Resources\SupplierResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -9,22 +9,18 @@ use App\Enums\SaleStatusEnum;
 use Filament\Resources\Table;
 use App\Enums\OrderStatusEnum;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\RelationManagers\RelationManager;
 
-class SalesRelationManager extends RelationManager
+class OrdersRelationManager extends RelationManager
 {
-    protected static string $relationship = 'sales';
+    protected static string $relationship = 'orders';
 
     protected static ?string $recordTitleAttribute = 'date';
 
@@ -41,11 +37,11 @@ class SalesRelationManager extends RelationManager
                     ->sortable(),
                 TextColumn::make('date')
                     ->sortable(),
-                IconColumn::make('purchased')
+                IconColumn::make('delivered')
                     ->options(['heroicon-o-check-circle' => 1, 'heroicon-o-x-circle' => 0])
                     ->colors(['success' => 1, 'warning' => 0]),
                 BadgeColumn::make('status')
-                    ->colors(OrderStatusEnum::enumColors())
+                    ->colors(SaleStatusEnum::enumColors())
                     ->sortable(),
             ])
             ->filters([
@@ -53,10 +49,15 @@ class SalesRelationManager extends RelationManager
                     ->options(SaleStatusEnum::enumOptions())
                     ->label('Payment Status')
                     ->placeholder('All Statuses'),
-                Filter::make('purchased')
-                    ->label('Purchased')
-                    ->query(fn (Builder $query) => $query->where('purchased', 1))
+                Filter::make('Delivered')
+                    ->label('Delivered')
+                    ->query(fn (Builder $query) => $query->where('delivered', 1))
                     ->toggle()
+            ])
+            ->headerActions([])
+            ->actions([])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 }

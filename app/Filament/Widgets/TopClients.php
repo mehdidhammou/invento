@@ -13,7 +13,7 @@ class TopClients extends PieChartWidget
     protected function getData(): array
     {
         // top clients by amount spent 
-        $clients = DB::table('sales')->join('clients', 'sales.client_id', '=', 'clients.id')->selectRaw('clients.name, sum(sales.total_paid) as total')->groupBy('clients.name')->get();
+        $clients = DB::table('sales')->join('clients', 'sales.client_id', '=', 'clients.id')->selectRaw('clients.id, clients.name, sum(sales.total_paid) as total')->groupBy(['clients.id','clients.name'])->get();
         
         $data = [];
         $labels = [];
