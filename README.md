@@ -6,10 +6,6 @@
 
 ## Configuration:
 
-1.   [XAMPP](https://www.apachefriends.org/download.html) (PHP `^8.1`)
-2.   [Composer](https://getcomposer.org/download/)
-3.   [Node.js](https://nodejs.org/en/download/)
-
 Clone the repo :
 
 ```
@@ -49,7 +45,7 @@ generate the app key :
 php artisan key:generate
 ```
 
-Configure the database connection in `.env` :
+Configure your database credentials in `.env` :
 
 ```
 DB_CONNECTION=mysql
@@ -77,9 +73,9 @@ php artisan serve
 
 ## Licence
 
-Ce projet est sous licence MIT.
+This project is licenesed under MIT License.
 
-## Auteurs
+## Authors
 
 creators and maintainers
 
